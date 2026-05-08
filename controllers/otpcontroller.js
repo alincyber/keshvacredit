@@ -1,0 +1,68 @@
+const generateOTP =require ("../util/generateOTP.js");
+const otpStore = require ("../data/otpstore.js");
+
+const sendOTP = (req, res) => {
+  const { phone } = req.body;
+
+  if (!phone) {
+    return res.status(400).json({
+      success: false,
+      message: "Phone number required"
+    });
+  }
+
+  const otp = generateOTP();
+
+  otpStore[phone] = {
+    otp,
+    expiresAt: Date.now() + 5 * 60 * 1000
+  };
+
+  console.log(`OTP for ${phone}: ${otp}`);
+
+  res.json({
+    success: true,
+    message: "OTP sent successfully",
+    otp   // remove in production
+  
+  });
+};
+
+ const verifyOTP = (req, res) => {
+  const { phone, otp } = req.body;
+
+  const data = otpStore[phone];
+
+  if (!data) {
+    return res.status(400).json({
+      success: false,
+      message: "OTP not found"
+    });
+  }
+
+  if (Date.now() > data.expiresAt) {
+    delete otpStore[phone];
+
+    return res.status(400).json({
+      success: false,
+      message: "OTP expired"
+    });
+  }
+
+  if (data.otp !== otp) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid OTP"
+    });
+  }
+
+  delete otpStore[phone];
+
+  res.json({
+    success: true,
+    message: "OTP verified successfully"
+  });
+};
+
+
+module.exports = { sendOTP, verifyOTP };
