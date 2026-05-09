@@ -1,5 +1,5 @@
-const generateOTP =require ("../util/generateOTP.js");
-const otpStore = require ("../data/otpstore.js");
+const generateOTP = require("../util/generateOTP.js");
+const otpStore = require("../data/otpstore.js");
 
 const sendOTP = (req, res) => {
   const { phone } = req.body;
@@ -7,15 +7,32 @@ const sendOTP = (req, res) => {
   if (!phone) {
     return res.status(400).json({
       success: false,
-      message: "Phone number required"
+      message: "Phone number required",
     });
   }
 
+  if (!phone) {
+    return res.status(400).json({
+      message: "Phone number required",
+    });
+  }
+
+  if (phone.length !== 10) {
+    return res.status(400).json({
+      message: "Phone number must be 10 digits",
+    });
+  }
+
+  if (isNaN(phone)) {
+    return res.status(400).json({
+      message: "Phone number must contain only numbers",
+    });
+  }
   const otp = generateOTP();
 
   otpStore[phone] = {
     otp,
-    expiresAt: Date.now() + 5 * 60 * 1000
+    expiresAt: Date.now() + 5 * 60 * 1000,
   };
 
   console.log(`OTP for ${phone}: ${otp}`);
@@ -23,12 +40,11 @@ const sendOTP = (req, res) => {
   res.json({
     success: true,
     message: "OTP sent successfully",
-    otp   // remove in production
-  
+    otp, // remove in production
   });
 };
 
- const verifyOTP = (req, res) => {
+const verifyOTP = (req, res) => {
   const { phone, otp } = req.body;
 
   const data = otpStore[phone];
@@ -36,7 +52,7 @@ const sendOTP = (req, res) => {
   if (!data) {
     return res.status(400).json({
       success: false,
-      message: "OTP not found"
+      message: "OTP not found",
     });
   }
 
@@ -45,14 +61,14 @@ const sendOTP = (req, res) => {
 
     return res.status(400).json({
       success: false,
-      message: "OTP expired"
+      message: "OTP expired",
     });
   }
 
   if (data.otp !== otp) {
     return res.status(400).json({
       success: false,
-      message: "Invalid OTP"
+      message: "Invalid OTP",
     });
   }
 
@@ -60,9 +76,8 @@ const sendOTP = (req, res) => {
 
   res.json({
     success: true,
-    message: "OTP verified successfully"
+    message: "OTP verified successfully",
   });
 };
-
 
 module.exports = { sendOTP, verifyOTP };
