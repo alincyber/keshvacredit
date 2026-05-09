@@ -28,7 +28,9 @@ const createuser = async (req, res) => {
         message: "Please enter all details"
       });
     }
-
+    if(!phone===10){
+        ret
+    }
     const existuser = await User.findOne({
       $or: [{ email }, { phone }]
     });
