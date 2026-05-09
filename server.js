@@ -12,7 +12,7 @@ const otpRoutes = require ("./routes/otpRoutes");
 const loginroutes = require("./routes/loginroutes");
 
 app.use("/api", loginroutes);
-app.use("/api",otpRoutes)
+app.use("/api",otpRoutes);
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URL)
 .then(() => {

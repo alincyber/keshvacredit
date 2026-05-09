@@ -80,4 +80,4 @@ const verifyOTP = (req, res) => {
   });
 };
 
-module.exports = { sendOTP, verifyOTP };
+module.exports = { sendOTP, verifyOTP,  };

@@ -38,7 +38,7 @@ if (!phone) {
 
 if (phone.length !== 10) {
   return res.status(400).json({
-    message: "PHOEN NUMBER MUST BE 10 DIGITS"
+    message: "PHONE NUMBER MUST BE 10 DIGITS"
   });
 }
 
@@ -241,6 +241,43 @@ if (Number(loan_amount) > Number(income) * 20) {
 
 
 
+if (!employment_type) {
+  return res.status(400).json({
+    message: "EMPLOYMENT TYPE IS REQUIRED"
+  });
+}
+
+// remove extra spaces
+const jobType = employment_type.trim();
+
+// minimum length
+if (jobType.length < 3) {
+  return res.status(400).json({
+    message: "EMPLOYMENT TYPE IS TOO SHORT"
+  });
+}
+
+// numbers not allowed
+if (!isNaN(jobType)) {
+  return res.status(400).json({
+    message: "EMPLOYMENT TYPE CANNOT BE ONLY NUMBERS"
+  });
+}
+
+// allowed values
+if (
+  jobType !== "Salaried" &&
+  jobType !== "Self Employed" &&
+  jobType !== "Business" &&
+  jobType !== "Student" &&
+  jobType !== "Freelancer" &&
+  jobType !== "Government Job" &&
+  jobType !== "Private Job"
+) {
+  return res.status(400).json({
+    message: "INVALID EMPLOYMENT TYPE"
+  });
+}
 
 
 
@@ -278,26 +315,44 @@ if (Number(loan_amount) > Number(income) * 20) {
     throw error
   }
 };
-
-const updateuser=async(req,res)=>{
+// UPDATE USER BY PAN
+const updateuser = async (req, res) => {
   try {
-    const{name,...update}=req.body;
-    if(!pan){
-      return res.status(400).json({
-        message:"THE PAN IS REQUIRED"
-      })
-    }
-    if(!updateuser){
-      return res.status(400).json({
-        message:"THE USER NOT FOUND",
-      })
-    }
-    return res.status(200).json({
-      message:"THE USER SUCCESSSFULLY UPDATED"
-    })
-  } catch (error) {
-    throw error
-  }
-}
+    const { pan, ...update } = req.body;
 
-module.exports = { createuser };
+    // PAN required
+    if (!pan) {
+      return res.status(400).json({
+        message: "THE PAN IS REQUIRED"
+      });
+    }
+
+    // Find and update user
+   const updatedUser = await User.findOneAndUpdate(
+  { pan: pan },
+  update,
+  { returnDocument: "after" }
+);
+
+    // User not found
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: "THE USER NOT FOUND"
+      });
+    }
+
+    // Success
+    return res.status(200).json({
+      message: "THE USER SUCCESSFULLY UPDATED",
+      data: updatedUser
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "INTERNAL SERVER ERROR",
+      error: error.message
+    });
+  }
+};
+
+module.exports = { createuser, updateuser };
