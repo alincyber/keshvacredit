@@ -264,7 +264,7 @@ if (!isNaN(jobType)) {
   });
 }
 
-// allowed values
+
 if (
   jobType !== "Salaried" &&
   jobType !== "Self Employed" &&
@@ -279,6 +279,76 @@ if (
   });
 }
 
+
+if (!pincode) {
+  return res.status(400).json({
+    message: "PINCODE IS REQUIRED"
+  });
+}
+
+if (isNaN(pincode)) {
+  return res.status(400).json({
+    message: "PINCODE MUST CONTAIN ONLY NUMBERS"
+  });
+}
+
+if (pincode.length !== 6) {
+  return res.status(400).json({
+    message: "PINCODE MUST BE 6 DIGITS"
+  });
+}
+
+if (pincode[0] === "0") {
+  return res.status(400).json({
+    message: "PINCODE CANNOT START WITH 0"
+  });
+}
+
+
+
+
+if (!city) {
+  return res.status(400).json({
+    message: "CITY IS REQUIRED"
+  });
+}
+
+const userCity = city.trim();
+
+if (userCity.length < 2) {
+  return res.status(400).json({
+    message: "CITY NAME TOO SHORT"
+  });
+}
+
+if (!isNaN(userCity)) {
+  return res.status(400).json({
+    message: "CITY CANNOT BE ONLY NUMBERS"
+  });
+}
+
+
+
+
+if (!state) {
+  return res.status(400).json({
+    message: "STATE IS REQUIRED"
+  });
+}
+
+const userState = state.trim();
+
+if (userState.length < 2) {
+  return res.status(400).json({
+    message: "STATE NAME TOO SHORT"
+  });
+}
+
+if (!isNaN(userState)) {
+  return res.status(400).json({
+    message: "STATE CANNOT BE ONLY NUMBERS"
+  });
+}
 
 
 
