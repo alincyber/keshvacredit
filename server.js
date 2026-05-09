@@ -1,14 +1,28 @@
 const express = require("express");
-const otpRoutes = require("./routes/otpRoutes.js");
-const cors = require("./middleware/cors.js");
-const dotenv = require("dotenv");
-dotenv.config()
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
+const dns = require ("dns");
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 const app = express();
 
+app.use(cors());
 app.use(express.json());
+const otpRoutes = require ("./routes/otpRoutes");
+const loginroutes = require("./routes/loginroutes");
 
-app.use("/api", otpRoutes);
+app.use("/api", loginroutes);
+app.use("/api",otpRoutes)
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URL)
+.then(() => {
+  console.log("MongoDB Connected");
+})
+.catch((err) => {
+  console.log(err);
+});
 
-app.listen(5000, () => {
+// Server Start
+app.listen(process.env.PORT || 5000, () => {
   console.log("Server running on port 5000");
 });

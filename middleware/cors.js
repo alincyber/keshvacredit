@@ -16,6 +16,6 @@ const corsMiddleware = (req,res,next)=>{
         allowedheader:["content-type","Authorization"],
         Credential:true,
     };
-    return cors(corsOptions)(req,resz,next);
+    return cors(corsOptions)(req,res,next);
 };
 module.exports= corsMiddleware
