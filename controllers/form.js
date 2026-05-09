@@ -1,3 +1,4 @@
+const { convertProcessSignalToExitCode } = require("node:util");
 const User = require("../model/userdata");
 const jwt = require("jsonwebtoken");
 
@@ -385,33 +386,32 @@ if (!isNaN(userState)) {
     throw error
   }
 };
-// UPDATE USER BY PAN
+
+
 const updateuser = async (req, res) => {
   try {
     const { pan, ...update } = req.body;
 
-    // PAN required
+
     if (!pan) {
       return res.status(400).json({
         message: "THE PAN IS REQUIRED"
       });
     }
 
-    // Find and update user
    const updatedUser = await User.findOneAndUpdate(
   { pan: pan },
   update,
   { returnDocument: "after" }
 );
 
-    // User not found
+
     if (!updatedUser) {
       return res.status(404).json({
         message: "THE USER NOT FOUND"
       });
     }
 
-    // Success
     return res.status(200).json({
       message: "THE USER SUCCESSFULLY UPDATED",
       data: updatedUser
@@ -424,5 +424,39 @@ const updateuser = async (req, res) => {
     });
   }
 };
+const removeuser = async (req, res) => {
+  try {
+    const { pan } = req.body;
 
-module.exports = { createuser, updateuser };
+
+    if (!pan) {
+      return res.status(400).json({
+        message: "PAN IS REQUIRED"
+      });
+    }
+
+
+    const deleteuser = await User.findOneAndDelete({ pan });
+
+
+    if (!deleteuser) {
+      return res.status(404).json({
+        message: "USER NOT FOUND"
+      });
+    }
+
+
+    return res.status(200).json({
+      message: "USER DELETED SUCCESSFULLY",
+      data: deleteuser
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "INTERNAL SERVER ERROR",
+      error: error.message
+    });
+  }
+};
+
+module.exports = { createuser, updateuser, removeuser };
