@@ -11,7 +11,7 @@ const otpRoutes = require("./routes/otpRoutes");
 const loginroutes = require("./routes/loginroutes");
 const connectDB = require("./config/db");
 app.use(express.static("public"));
-app.use(cors());
+app.use(cors());``
 app.use(express.json());
 
 
@@ -28,6 +28,42 @@ app.use("/api", otpRoutes);
 // });
 
 
+
+app.get("/", (req, res) => {
+    res.send(`
+        <html>
+        <head>
+            <title>My Server</title>
+            <style>
+                body{
+                    background:#111;
+                    color:white;
+                    text-align:center;
+                    padding-top:100px;
+                    font-family:Arial;
+                }
+                h1{
+                    color:lime;
+                }
+                button{
+                    padding:10px 20px;
+                    border:none;
+                    background:orange;
+                    color:black;
+                    font-size:18px;
+                    border-radius:10px;
+                    cursor:pointer;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>🚀 Node Server Running</h1>
+            <p>Welcome to my backend server</p>
+            <button onclick="alert('Server Live')">Click</button>
+        </body>
+        </html>
+    `);
+});
 
 app.get("/read", (req, res) => {
     res.send(`
