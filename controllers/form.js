@@ -1,8 +1,4 @@
-const { convertProcessSignalToExitCode } = require("node:util");
 const User = require("../model/userdata");
-const jwt = require("jsonwebtoken");
-
-const SECRET_KEY = "this_is_secret_key";
 
 const createuser = async (req, res) => {
   try {
@@ -60,7 +56,7 @@ if (isNaN(phone)) {
     }
 if (!email || !email.includes("@gmail") || !email.includes(".com")) {
   return res.status(400).json({
-    message: "PLEASE ENTER THE '@gamil.com'"
+    message: "PLEASE ENTER A VALID GMAIL ADDRESS"
   });
 }
 
@@ -220,7 +216,7 @@ if (isNaN(loan_amount)) {
 
 if (Number(loan_amount) < 500) {
   return res.status(400).json({
-    message: "MINIMUM LOAN AMOUNT MUST BE 1000"
+    message: "MINIMUM LOAN AMOUNT MUST BE 500"
   });
 }
 
@@ -383,7 +379,10 @@ if (!isNaN(userState)) {
     });
 
   } catch (error) {
-    throw error
+    return res.status(500).json({
+      message: "INTERNAL SERVER ERROR",
+      error: error.message
+    });
   }
 };
 

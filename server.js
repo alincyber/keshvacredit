@@ -11,7 +11,7 @@ const otpRoutes = require("./routes/otpRoutes");
 const loginroutes = require("./routes/loginroutes");
 const connectDB = require("./config/db");
 app.use(express.static("public"));
-app.use(cors());``
+app.use(cors());
 app.use(express.json());
 
 
@@ -57,7 +57,7 @@ app.get("/", (req, res) => {
             </style>
         </head>
         <body>
-            <h1>🚀 Node Server Running</h1>
+            <h1>Node Server Running</h1>
             <p>Welcome to my backend server</p>
             <button onclick="alert('Server Live')">Click</button>
         </body>

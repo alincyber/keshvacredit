@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "nodmeon server.js"
+    "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +20,6 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.1",
     "nodemailer": "^8.0.7",
-    "nodemon": "^3.1.14",
-    "nodmeon": "^0.0.1-security"
+    "nodemon": "^3.1.14"
   }
 }
