@@ -220,7 +220,7 @@ if (Number(loan_amount) < 500) {
   });
 }
 
-if (Number(loan_amount) > 5000) {
+if (Number(loan_amount) > 1000000) {
   return res.status(400).json({
     message: "LOAN AMOUNT TOO HIGH"
   });
@@ -362,8 +362,8 @@ if (!isNaN(userState)) {
       email,
       pan,
       dob,
-      income,
-      loan_amount,
+      income: Number(income),
+      loan_amount: Number(loan_amount),
       employment_type,
       pincode,
       city,
@@ -375,9 +375,26 @@ if (!isNaN(userState)) {
     return res.status(201).json({
       message: "USER CREATED SUCCESSFULLY",
       // token,
-      data: newuser.phone,
+      data: newuser,
     });
 
+  } catch (error) {
+    return res.status(500).json({
+      message: "INTERNAL SERVER ERROR",
+      error: error.message
+    });
+  }
+};
+
+const getusers = async (req, res) => {
+  try {
+    const users = await User.find();
+
+    return res.status(200).json({
+      success: true,
+      total: users.length,
+      data: users
+    });
   } catch (error) {
     return res.status(500).json({
       message: "INTERNAL SERVER ERROR",
@@ -458,4 +475,4 @@ const removeuser = async (req, res) => {
   }
 };
 
-module.exports = { createuser, updateuser, removeuser };
+module.exports = { createuser, getusers, updateuser, removeuser };

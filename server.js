@@ -9,17 +9,20 @@ const PORT = process.env.PORT || 5000;
 
 const otpRoutes = require("./routes/otpRoutes");
 const loginroutes = require("./routes/loginroutes");
+const loanroutes = require("./routes/loanroutes");
+const companyroutes = require("./routes/companyroutes");
 const connectDB = require("./config/db");
 app.use(express.static("public"));
 app.use(cors());
 app.use(express.json());
-
 
 connectDB();
 
 
 app.use("/api", loginroutes);
 app.use("/api", otpRoutes);
+app.use("/api/loan", loanroutes);
+app.use("/api/company", companyroutes);
 
 // app.get("/read", (req, res) => {
 //   res.json({
