@@ -3,23 +3,33 @@ const mongoose = require("mongoose");
 
 const normalizeCompanyData = (data) => ({
     company_name: data.company_name,
+    min_age: Number(data.min_age),
+    max_age: Number(data.max_age),
     min_income: Number(data.min_income),
     max_loan: Number(data.max_loan),
     interest_rate: Number(data.interest_rate),
-    allowed_employment: data.allowed_employment,
-    serviceable_states: data.serviceable_states
+    allowed_employment: data.allowed_employment
 });
 
 const validateCompanyData = (data) => {
     if (
         !data.company_name ||
+        data.min_age === undefined ||
+        data.max_age === undefined ||
         data.min_income === undefined ||
         data.max_loan === undefined ||
         data.interest_rate === undefined ||
-        !data.allowed_employment ||
-        !data.serviceable_states
+        !data.allowed_employment
     ) {
         return "PLEASE ENTER ALL COMPANY DETAILS";
+    }
+
+    if (isNaN(data.min_age)) {
+        return "MIN AGE MUST BE A NUMBER";
+    }
+
+    if (isNaN(data.max_age)) {
+        return "MAX AGE MUST BE A NUMBER";
     }
 
     if (isNaN(data.min_income)) {
@@ -36,10 +46,6 @@ const validateCompanyData = (data) => {
 
     if (!Array.isArray(data.allowed_employment)) {
         return "ALLOWED EMPLOYMENT MUST BE AN ARRAY";
-    }
-
-    if (!Array.isArray(data.serviceable_states)) {
-        return "SERVICEABLE STATES MUST BE AN ARRAY";
     }
 
     return null;
@@ -135,6 +141,14 @@ const updateCompany = async (req, res) => {
 
         if (update.min_income !== undefined) {
             update.min_income = Number(update.min_income);
+        }
+
+        if (update.min_age !== undefined) {
+            update.min_age = Number(update.min_age);
+        }
+
+        if (update.max_age !== undefined) {
+            update.max_age = Number(update.max_age);
         }
 
         if (update.max_loan !== undefined) {
