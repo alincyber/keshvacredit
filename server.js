@@ -24,14 +24,6 @@ app.use("/api", otpRoutes);
 app.use("/api/loan", loanroutes);
 app.use("/api/company", companyroutes);
 
-// app.get("/read", (req, res) => {
-//   res.json({
-//     message: "hi our server is online now"
-//   });
-// });
-
-
-
 app.get("/", (req, res) => {
     res.send(`
         <html>
