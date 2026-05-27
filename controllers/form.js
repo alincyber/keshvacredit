@@ -269,7 +269,8 @@ if (
   jobType !== "Student" &&
   jobType !== "Freelancer" &&
   jobType !== "Government Job" &&
-  jobType !== "Private Job"
+  jobType !== "Private Job" &&
+  jobType !== "other"
 ) {
   return res.status(400).json({
     message: "INVALID EMPLOYMENT TYPE"
