@@ -165,7 +165,7 @@ if (
   age--;
 }
 
-if (age < 18) {
+if (age < 20) {
   return res.status(400).json({
     message: "AGE MUST BE 18 OR ABOVE"
   });
