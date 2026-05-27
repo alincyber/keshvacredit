@@ -13,13 +13,7 @@ const normalizeCompanyData = (data) => ({
 
 const validateCompanyData = (data) => {
     if (
-        !data.company_name ||
-        data.min_age === undefined ||
-        data.max_age === undefined ||
-        data.min_income === undefined ||
-        data.max_loan === undefined ||
-        data.interest_rate === undefined ||
-        !data.allowed_employment
+        !data.company_name || data.min_age === undefined || data.max_age === undefined ||data.min_income === undefined ||data.max_loan === undefined ||data.interest_rate === undefined ||!data.allowed_employment 
     ) {
         return "PLEASE ENTER ALL COMPANY DETAILS";
     }
