@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Eligibility Code Visualizer</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            gap: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        .panel {
+            background: #252526;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            overflow-y: auto;
+        }
+        #input-panel { flex: 1; max-width: 300px; display: flex; flex-direction: column; gap: 15px; }
+        #code-panel { flex: 2; position: relative; }
+        #visual-panel { flex: 1.5; display: flex; flex-direction: column; gap: 15px; }
+        
+        h2 { margin-top: 0; color: #569cd6; font-size: 1.2rem; border-bottom: 1px solid #3c3c3c; padding-bottom: 10px; }
+        label { display: block; font-size: 0.85rem; margin-bottom: 5px; color: #9cdcfe; }
+        input, select { width: 100%; padding: 8px; background: #3c3c3c; border: 1px solid #6b6b6b; color: #fff; border-radius: 4px; box-sizing: border-box; }
+        
+        .code-line { padding: 3px 10px; border-left: 3px solid transparent; white-space: pre; font-size: 0.9rem; transition: background 0.2s; }
+        .active-line { background: #37373d; border-left-color: #0e639c; color: #fff; font-weight: bold; }
+        .passed-line { background: rgba(74, 131, 68, 0.2); border-left-color: #4ec9b0; }
+        .failed-line { background: rgba(197, 83, 83, 0.2); border-left-color: #f44747; }
+        
+        .matrix-box { background: #333333; padding: 15px; border-radius: 6px; border: 1px solid #444; }
+        .status { font-weight: bold; float: right; }
+        .status.true { color: #4ec9b0; }
+        .status.false { color: #f44747; }
+        
+        button { background: #0e639c; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-top: auto; }
+        button:hover { background: #1177bb; }
+        .step-info { color: #ce9178; font-style: italic; margin-bottom: 15px; min-height: 40px; font-size: 0.9rem;}
+    </style>
+</head>
+<body>
+
+    <div class="panel" id="input-panel">
+        <h2>1. Test Variables</h2>
+        <div>
+            <label>Applicant Age</label>
+            <input type="number" id="user_age" value="20">
+        </div>
+        <div>
+            <label>Monthly Income ($)</label>
+            <input type="number" id="user_income" value="30000">
+        </div>
+        <div>
+            <label>Requested Loan ($)</label>
+            <input type="number" id="user_loan" value="150000">
+        </div>
+        <div>
+            <label>Employment Type</label>
+            <select id="user_emp">
+                <option value="Salaried">Salaried</option>
+                <option value="Student">Student</option>
+                <option value="Freelancer">Freelancer</option>
+            </select>
+        </div>
+        <button onclick="startVisualization()">Run Visualizer ▶</button>
+    </div>
+
+    <div class="panel" id="code-panel">
+        <h2>2. Live Code Execution Trace</h2>
+        <div class="step-info" id="step-desc">Click "Run Visualizer" to watch execution trace line-by-line...</div>
+        <div id="code-container">
+            <div class="code-line" id="line1">const checkEligibility = (user, company) => {</div>
+            <div class="code-line" id="line2">    const ageCheck = user.age >= company.min_age && user.age <= company.max_age;</div>
+            <div class="code-line" id="line3">    const incomeCheck = user.income >= company.min_income;</div>
+            <div class="code-line" id="line4">    const loanCheck = user.loan_amount <= company.max_loan;</div>
+            <div class="code-line" id="line5">    const employmentCheck = company.allowed_employment.includes(user.employment_type);</div>
+            <div class="code-line" id="line6">    return ageCheck && incomeCheck && loanCheck && employmentCheck;</div>
+            <div class="code-line" id="line7">};</div>
+        </div>
+    </div>
+
+    <div class="panel" id="visual-panel">
+        <h2>3. Target Company Criteria</h2>
+        <div style="font-size:0.85rem; margin-bottom:15px; color:#aaa;">Comparing against "Apex Lenders Ltd" rule set:</div>
+        
+        <div class="matrix-box">
+            <p>Age Bracket (18 - 65): <span class="status" id="v-age">-</span></p>
+            <p>Income Floor (Min: $15,000): <span class="status" id="v-income">-</span></p>
+            <p>Loan Ceiling (Max: $200,000): <span class="status" id="v-loan">-</span></p>
+            <p>Allowed Emp: [Salaried, Freelancer]: <span class="status" id="v-emp">-</span></p>
+        </div>
+
+        <div class="matrix-box" style="text-align: center; margin-top: 10px;">
+            <h3>FINAL DECISION</h3>
+            <div id="final-decision" style="font-size: 1.5rem; font-weight: bold; color: #888;">PENDING</div>
+        </div>
+    </div>
+
+<script>
+    // Hardcoded ruleset for comparison simulation
+    const companyProfile = {
+        min_age: 18, max_age: 65,
+        min_income: 15000,
+        max_loan: 200000,
+        allowed_employment: ["Salaried", "Freelancer"]
+    };
+
+    function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+    async function startVisualization() {
+        // Reset Visual UI elements 
+        document.querySelectorAll('.code-line').forEach(el => el.className = 'code-line');
+        document.querySelectorAll('.status').forEach(el => { el.textContent = '-'; el.className = 'status'; });
+        document.getElementById('final-decision').textContent = "RUNNING...";
+        document.getElementById('final-decision').style.color = "#888";
+
+        // Grab current dynamic parameters from test panel
+        const user = {
+            age: Number(document.getElementById('user_age').value),
+            income: Number(document.getElementById('user_income').value),
+            loan_amount: Number(document.getElementById('user_loan').value),
+            employment_type: document.getElementById('user_emp').value
+        };
+
+        // Line 1 Execution
+        highlightLine(1, "Initializing comparison pipeline function context...");
+        await sleep(1500);
+
+        // Line 2 Execution (Age Evaluation)
+        const ageCheck = user.age >= companyProfile.min_age && user.age <= companyProfile.max_age;
+        highlightLine(2, `Evaluating age: ${user.age} vs (${companyProfile.min_age}-${companyProfile.max_age})`);
+        updateStatus('v-age', ageCheck);
+        await sleep(1800);
+
+        // Line 3 Execution (Income Evaluation)
+        const incomeCheck = user.income >= companyProfile.min_income;
+        highlightLine(3, `Evaluating income floor: $${user.income} >= $${companyProfile.min_income}`);
+        updateStatus('v-income', incomeCheck);
+        await sleep(1800);
+
+        // Line 4 Execution (Loan Evaluation)
+        const loanCheck = user.loan_amount <= companyProfile.max_loan;
+        highlightLine(4, `Evaluating request cap: $${user.loan_amount} <= $${companyProfile.max_loan}`);
+        updateStatus('v-loan', loanCheck);
+        await sleep(1800);
+
+        // Line 5 Execution (Employment Array Matrix Match)
+        const employmentCheck = companyProfile.allowed_employment.includes(user.employment_type);
+        highlightLine(5, `Scanning whitelist array for: "${user.employment_type}"`);
+        updateStatus('v-emp', employmentCheck);
+        await sleep(1800);
+
+        // Line 6 & 7 Execution (Logical AND Return evaluation)
+        const isEligible = ageCheck && incomeCheck && loanCheck && employmentCheck;
+        highlightLine(6, `Compiling all flags via logical AND operation expressions... Result: ${isEligible}`);
+        
+        const decisionBox = document.getElementById('final-decision');
+        if(isEligible) {
+            decisionBox.textContent = "APPROVED 🎉";
+            decisionBox.style.color = "#4ec9b0";
+            document.getElementById('line6').classList.add('passed-line');
+        } else {
+            decisionBox.textContent = "REJECTED ❌";
+            decisionBox.style.color = "#f44747";
+            document.getElementById('line6').classList.add('failed-line');
+        }
+        document.getElementById('step-desc').textContent = "Execution complete trace terminated.";
+    }
+
+    function highlightLine(lineId, description) {
+        document.querySelectorAll('.code-line').forEach(el => el.classList.remove('active-line'));
+        const active = document.getElementById('line' + lineId);
+        active.classList.add('active-line');
+        document.getElementById('step-desc').textContent = `[Line ${lineId}]: ${description}`;
+    }
+
+    function updateStatus(elementId, booleanValue) {
+        const target = document.getElementById(elementId);
+        target.textContent = booleanValue ? "PASSED" : "FAILED";
+        target.classList.add(booleanValue.toString());
+    }
+</script>
+</body>
+</html>
