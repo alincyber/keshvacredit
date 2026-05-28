@@ -18,7 +18,6 @@ app.use(express.json());
 
 connectDB();
 
-
 app.use("/api", loginroutes);
 app.use("/api", otpRoutes);
 app.use("/api/loan", loanroutes);
