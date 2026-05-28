@@ -1,4 +1,5 @@
 const User = require("../model/userdata");
+const jwt = require("jsonwebtoken");
 
 const createuser = async (req, res) => {
   try {
@@ -256,11 +257,23 @@ const createuser = async (req, res) => {
     const savedUser = await User.findOneAndUpdate(
       { $or: [{ phone }, { pan }] },
       userData,
-      { upsert: true, new: true, runValidators: true }
+      { upsert: true, returnDocument: "after", runValidators: true }
+    );
+
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({
+        message: "JWT SECRET IS NOT CONFIGURED"
+      });
+    }
+
+    const token = jwt.sign(
+      { userId: savedUser._id, phone: savedUser.phone },
+      process.env.JWT_SECRET,
     );
 
     return res.status(201).json({
       message: "USER PROFILE SYNCHRONIZED SUCCESSFULLY",
+      token,
       data: savedUser
     });
 
@@ -353,5 +366,4 @@ const removeuser = async (req, res) => {
     });
   }
 };
-
 module.exports = { createuser, getusers, updateuser, removeuser };

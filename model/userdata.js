@@ -7,6 +7,7 @@ const userschema= new Schema({
     email:{type:String},
     pan:{type:String},
     dob:{type:String},
+    age:{type:Number},
     income:{type:Number},
     loan_amount:{type:Number},
     employment_type:{type:String},
