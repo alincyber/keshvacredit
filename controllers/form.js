@@ -285,9 +285,40 @@ const createuser = async (req, res) => {
   }
 };
 
+const getuserbyphone = async (req, res) => {
+  try {
+    const { phone } = req.body;
+
+    if (!phone) {
+      return res.status(400).json({
+        message: "PHONE NUMBER IS REQUIRED"
+      });
+    }
+
+    const user = await User.findOne({ phone });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "USER NOT FOUND"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: user
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "INTERNAL SERVER ERROR",
+      error: error.message
+    });
+  }
+};
+
 const getusers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find({});
     return res.status(200).json({
       success: true,
       total: users.length,
@@ -366,4 +397,4 @@ const removeuser = async (req, res) => {
     });
   }
 };
-module.exports = { createuser, getusers, updateuser, removeuser };
+module.exports = { createuser, getusers, updateuser, removeuser, getuserbyphone };

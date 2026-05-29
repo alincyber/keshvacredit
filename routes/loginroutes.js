@@ -1,5 +1,5 @@
 const express = require("express");
-const { createuser , getusers, updateuser , removeuser } = require("../controllers/form");
+const { createuser , getusers, updateuser , removeuser, getuserbyphone } = require("../controllers/form");
 
 const router = express.Router();
 
@@ -7,6 +7,6 @@ router.post("/createuser", createuser);
 router.get("/users", getusers);
 router.put("/updateuser",updateuser);
 router.delete("/removeuser", removeuser)
-
+router.post("/getuserbyphone", getuserbyphone);
 module.exports = router;
 
