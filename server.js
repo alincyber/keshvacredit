@@ -11,13 +11,14 @@ const otpRoutes = require("./routes/otpRoutes");
 const loginroutes = require("./routes/loginroutes");
 const loanroutes = require("./routes/loanroutes");
 const companyroutes = require("./routes/companyroutes");
+const contactroutes = require("./routes/contactroute");
 const connectDB = require("./config/db");
 app.use(express.static("public"));
 app.use(cors());
 app.use(express.json());
 
 connectDB();
-
+app.use("/api",contactroutes);
 app.use("/api", loginroutes);
 app.use("/api", otpRoutes);
 app.use("/api/loan", loanroutes);

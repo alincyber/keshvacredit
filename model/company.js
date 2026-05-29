@@ -12,4 +12,4 @@ const companySchema = new Schema({
     allowed_employment: [{ type: String }]
 }, { versionKey: false });
 
-module.exports = model("Company", companySchema);
+module.exports = model("Company", companySchema, "companies");
