@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KeshvaCredit Backend Dashboard</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #697386;
+      --line: #dbe2ef;
+      --accent: #1f7a5b;
+      --accent-dark: #155a43;
+      --danger: #b42318;
+      --code: #101828;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 24px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(280px, 420px) minmax(320px, 1fr);
+      gap: 18px;
+      padding: 18px;
+    }
+
+    section,
+    aside {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      min-width: 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #98a2b3;
+    }
+
+    .dot.ok {
+      background: var(--accent);
+    }
+
+    .dot.bad {
+      background: var(--danger);
+    }
+
+    .panel-body {
+      padding: 16px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .tab {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      color: var(--ink);
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .tab.active {
+      border-color: var(--accent);
+      background: #e8f4ef;
+      color: var(--accent-dark);
+    }
+
+    .group {
+      display: none;
+      gap: 12px;
+    }
+
+    .group.active {
+      display: grid;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px 11px;
+      color: var(--ink);
+      background: #ffffff;
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 84px;
+      resize: vertical;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    button {
+      min-height: 40px;
+      border: 0;
+      border-radius: 6px;
+      padding: 0 12px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+    }
+
+    .primary {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .primary:hover {
+      background: var(--accent-dark);
+    }
+
+    .secondary {
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--ink);
+    }
+
+    .danger {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    .quick {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    pre {
+      min-height: 360px;
+      max-height: 620px;
+      overflow: auto;
+      margin: 0;
+      padding: 14px;
+      border-radius: 8px;
+      background: var(--code);
+      color: #e6edf3;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .history {
+      display: grid;
+      gap: 8px;
+      max-height: 220px;
+      overflow: auto;
+      margin-top: 14px;
+    }
+
+    .history button {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .method {
+      font-weight: 800;
+      color: var(--accent-dark);
+    }
+
+    @media (max-width: 860px) {
+      header,
+      main {
+        padding: 14px;
+      }
+
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs,
+      .quick,
+      .actions,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>KeshvaCredit Backend</h1>
+    <div class="status"><span id="statusDot" class="dot"></span><span id="statusText">Checking server</span></div>
+  </header>
+
+  <main>
+    <section>
+      <div class="section-head">
+        <h2>API Controls</h2>
+      </div>
+      <div class="panel-body">
+        <div class="tabs" role="tablist">
+          <button class="tab active" type="button" data-tab="users">Users</button>
+          <button class="tab" type="button" data-tab="contacts">Contact</button>
+          <button class="tab" type="button" data-tab="companies">Company</button>
+          <button class="tab" type="button" data-tab="otp">OTP</button>
+        </div>
+
+        <form id="users" class="group active">
+          <div class="quick">
+            <button class="secondary" type="button" data-request="getUsers">Get Users</button>
+            <button class="secondary" type="button" data-request="getUserByPhone">Find Phone</button>
+            <button class="danger" type="button" data-request="removeUser">Delete PAN</button>
+          </div>
+          <div class="grid-2">
+            <label>Name<input name="name" value="Test User"></label>
+            <label>Phone<input name="phone" value="9876543210"></label>
+            <label>Email<input name="email" value="test@gmail.com"></label>
+            <label>PAN<input name="pan" value="ABCDE1234F"></label>
+            <label>DOB<input name="dob" value="1995-01-10"></label>
+            <label>Income<input name="income" value="50000"></label>
+            <label>Loan Amount<input name="loan_amount" value="200000"></label>
+            <label>Employment
+              <select name="employment_type">
+                <option>salary</option>
+                <option>self-employed</option>
+                <option>business</option>
+              </select>
+            </label>
+            <label>Pincode<input name="pincode" value="110001"></label>
+            <label>City<input name="city" value="Delhi"></label>
+            <label>State<input name="state" value="Delhi"></label>
+          </div>
+          <div class="actions">
+            <button class="primary" type="button" data-request="createUser">Create User</button>
+            <button class="secondary" type="button" data-request="updateUser">Update By PAN</button>
+          </div>
+        </form>
+
+        <form id="contacts" class="group">
+          <label>Name<input name="name" value="Contact User"></label>
+          <label>Email<input name="email" value="contact@gmail.com"></label>
+          <label>Phone<input name="phone" value="9876543210"></label>
+          <label>Message<textarea name="message">Need help with loan options.</textarea></label>
+          <button class="primary" type="button" data-request="createContact">Create Contact</button>
+        </form>
+
+        <form id="companies" class="group">
+          <div class="quick">
+            <button class="secondary" type="button" data-request="getCompanies">Get Companies</button>
+            <button class="secondary" type="button" data-request="compareLive">Compare Phone</button>
+            <button class="danger" type="button" data-request="removeCompany">Delete Company</button>
+          </div>
+          <div class="grid-2">
+            <label>Company Name<input name="company_name" value="Demo Finance"></label>
+            <label>Min Age<input name="min_age" value="21"></label>
+            <label>Max Age<input name="max_age" value="60"></label>
+            <label>Min Income<input name="min_income" value="25000"></label>
+            <label>Max Loan<input name="max_loan" value="500000"></label>
+            <label>Interest Rate<input name="interest_rate" value="12"></label>
+            <label>Allowed Employment<input name="allowed_employment" value="salary,self-employed,business"></label>
+            <label>User Phone<input name="phone" value="9876543210"></label>
+          </div>
+          <div class="actions">
+            <button class="primary" type="button" data-request="addCompany">Add Company</button>
+            <button class="secondary" type="button" data-request="updateCompany">Update Company</button>
+          </div>
+        </form>
+
+        <form id="otp" class="group">
+          <label>Phone<input name="phone" value="9876543210"></label>
+          <label>OTP<input name="otp" placeholder="Enter OTP returned by send-otp"></label>
+          <div class="actions">
+            <button class="primary" type="button" data-request="sendOtp">Send OTP</button>
+            <button class="secondary" type="button" data-request="verifyOtp">Verify OTP</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <aside>
+      <div class="section-head">
+        <h2>Response</h2>
+        <button class="secondary" type="button" id="clearOutput">Clear</button>
+      </div>
+      <div class="panel-body">
+        <pre id="output">Ready. Choose an action to test your backend.</pre>
+        <div id="history" class="history"></div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const output = document.getElementById("output");
+    const historyEl = document.getElementById("history");
+    const statusDot = document.getElementById("statusDot");
+    const statusText = document.getElementById("statusText");
+    const history = [];
+
+    const forms = {
+      users: document.getElementById("users"),
+      contacts: document.getElementById("contacts"),
+      companies: document.getElementById("companies"),
+      otp: document.getElementById("otp")
+    };
+
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach((item) => item.classList.remove("active"));
+        document.querySelectorAll(".group").forEach((item) => item.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.tab).classList.add("active");
+      });
+    });
+
+    document.getElementById("clearOutput").addEventListener("click", () => {
+      output.textContent = "Ready.";
+    });
+
+    document.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-request]");
+      if (!button) return;
+      runRequest(button.dataset.request);
+    });
+
+    function formData(form) {
+      return Object.fromEntries(new FormData(form).entries());
+    }
+
+    function numberFields(data, fields) {
+      fields.forEach((field) => {
+        if (data[field] !== "" && data[field] !== undefined) data[field] = Number(data[field]);
+      });
+      return data;
+    }
+
+    function companyBody() {
+      const data = formData(forms.companies);
+      numberFields(data, ["min_age", "max_age", "min_income", "max_loan", "interest_rate"]);
+      data.allowed_employment = data.allowed_employment
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+      return data;
+    }
+
+    function userBody() {
+      const data = formData(forms.users);
+      numberFields(data, ["income", "loan_amount"]);
+      return data;
+    }
+
+    function buildRequest(key) {
+      const users = formData(forms.users);
+      const contacts = formData(forms.contacts);
+      const companies = formData(forms.companies);
+      const otp = formData(forms.otp);
+
+      const map = {
+        getUsers: ["GET", "/api/users"],
+        createUser: ["POST", "/api/createuser", userBody()],
+        updateUser: ["PUT", "/api/updateuser", userBody()],
+        removeUser: ["DELETE", "/api/removeuser", { pan: users.pan }],
+        getUserByPhone: ["POST", "/api/getuserbyphone", { phone: users.phone }],
+        createContact: ["POST", "/api/usercontact", contacts],
+        getCompanies: ["GET", "/api/company"],
+        addCompany: ["POST", "/api/company/add", companyBody()],
+        updateCompany: ["PUT", "/api/company/update-by-name", companyBody()],
+        removeCompany: ["DELETE", "/api/company/delete-by-name", { company_name: companies.company_name }],
+        compareLive: ["POST", "/api/company/compare-live", { phone: companies.phone }],
+        sendOtp: ["POST", "/api/send-otp", { phone: otp.phone }],
+        verifyOtp: ["POST", "/api/verify-otp", { phone: otp.phone, otp: otp.otp }]
+      };
+
+      return map[key];
+    }
+
+    async function runRequest(key) {
+      const request = buildRequest(key);
+      if (!request) return;
+
+      const [method, path, body] = request;
+      const started = performance.now();
+      output.textContent = method + " " + path + "\nLoading...";
+
+      try {
+        const options = { method, headers: {} };
+        if (body) {
+          options.headers["Content-Type"] = "application/json";
+          options.body = JSON.stringify(body);
+        }
+
+        const response = await fetch(path, options);
+        const text = await response.text();
+        let payload = text;
+
+        try {
+          payload = JSON.parse(text);
+        } catch (error) {
+          payload = text;
+        }
+
+        const elapsed = Math.round(performance.now() - started);
+        const result = {
+          request: { method, path, body: body || null },
+          status: response.status,
+          ok: response.ok,
+          time_ms: elapsed,
+          response: payload
+        };
+
+        output.textContent = JSON.stringify(result, null, 2);
+        addHistory(method, path, response.status);
+      } catch (error) {
+        output.textContent = JSON.stringify({
+          request: { method, path, body: body || null },
+          error: error.message
+        }, null, 2);
+        addHistory(method, path, "ERR");
+      }
+    }
+
+    function addHistory(method, path, status) {
+      history.unshift({ method, path, status });
+      history.splice(8);
+
+      historyEl.innerHTML = "";
+      history.forEach((item) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.innerHTML = '<span class="method">' + item.method + " " + item.status + '</span><span>' + item.path + "</span>";
+        historyEl.appendChild(button);
+      });
+    }
+
+    async function checkServer() {
+      try {
+        const response = await fetch("/", { cache: "no-store" });
+        statusDot.className = response.ok ? "dot ok" : "dot bad";
+        statusText.textContent = response.ok ? "Server online" : "Server responded with " + response.status;
+      } catch (error) {
+        statusDot.className = "dot bad";
+        statusText.textContent = "Server offline";
+      }
+    }
+
+    checkServer();
+    setInterval(checkServer, 10000);
+  </script>
+</body>
+</html>
