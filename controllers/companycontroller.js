@@ -28,12 +28,13 @@ const calculateAge = (dob) => {
 // HELPER: Check User Eligibility
 // ─────────────────────────────────────────
 const isUserEligibleForCompany = (user, company) => {
-    const ageOk = user.age >= company.min_age && user.age <= company.max_age;
-    const incomeOk = user.income >= company.min_income;
-    const loanOk = user.loan_amount <= company.max_loan;
+    const userAge = user.age || calculateAge(user.dob);
+    const ageOk = userAge >= company.min_age && userAge <= company.max_age;
+    const incomeOk = Number(user.income) >= company.min_income;
+    const loanOk = Number(user.loan_amount) <= company.max_loan;
 
-    const employmentOk = company.allowed_employment.some(
-        (employment) => employment.toLowerCase() === user.employment_type.toLowerCase()
+    const employmentOk = Array.isArray(company.allowed_employment) && company.allowed_employment.some(
+        (employment) => employment.toLowerCase() === String(user.employment_type || "").toLowerCase()
     );
 
     return ageOk && incomeOk && loanOk && employmentOk;
@@ -134,65 +135,46 @@ const getCompanyById = async (req, res) => {
 };
 
 // ─────────────────────────────────────────
-// COMPARE LIVE LOANS (Direct single-form processing)
+// COMPARE LIVE LOANS (Find saved user by phone)
 // ─────────────────────────────────────────
 const compareLiveLoans = async (req, res) => {
     try {
-        const {
-            name, phone, email, pan, dob, income,
-            loan_amount, employment_type, pincode, city, state
-        } = req.body;
+        const { phone } = req.body;
 
-        // Required checks
-        if (!name) return res.status(400).json({ message: "NAME IS REQUIRED" });
         if (!phone) return res.status(400).json({ message: "PHONE IS REQUIRED" });
-        if (!email) return res.status(400).json({ message: "EMAIL IS REQUIRED" });
-        if (!pan) return res.status(400).json({ message: "PAN IS REQUIRED" });
-        if (!dob) return res.status(400).json({ message: "DOB IS REQUIRED" });
-        if (!income) return res.status(400).json({ message: "INCOME IS REQUIRED" });
-        if (!loan_amount) return res.status(400).json({ message: "LOAN AMOUNT IS REQUIRED" });
-        if (!employment_type) return res.status(400).json({ message: "EMPLOYMENT TYPE IS REQUIRED" });
-        if (!pincode) return res.status(400).json({ message: "PINCODE IS REQUIRED" });
-        if (!city) return res.status(400).json({ message: "CITY IS REQUIRED" });
-        if (!state) return res.status(400).json({ message: "STATE IS REQUIRED" });
 
-        // Field validations
         if (String(phone).length !== 10 || isNaN(phone)) {
             return res.status(400).json({ message: "PHONE NUMBER MUST BE 10 DIGITS" });
         }
-        if (!String(email).includes("@gmail") || !String(email).includes(".com")) {
-            return res.status(400).json({ message: "PLEASE ENTER A VALID GMAIL ADDRESS" });
-        }
-        if (String(pan).length !== 10) {
-            return res.status(400).json({ message: "PAN CARD MUST BE 10 CHARACTERS" });
-        }
-        if (String(dob).length !== 10 || dob[4] !== "-" || dob[7] !== "-") {
-            return res.status(400).json({ message: "DOB FORMAT MUST BE YYYY-MM-DD" });
-        }
-        if (isNaN(income)) return res.status(400).json({ message: "INCOME MUST BE A NUMBER" });
-        if (isNaN(loan_amount)) return res.status(400).json({ message: "LOAN AMOUNT MUST BE A NUMBER" });
-        if (Number(income) < 10000) return res.status(400).json({ message: "MINIMUM INCOME MUST BE 10000" });
-        if (Number(loan_amount) < 500) return res.status(400).json({ message: "MINIMUM LOAN AMOUNT MUST BE 500" });
-        if (String(pincode).length !== 6 || isNaN(pincode)) {
-            return res.status(400).json({ message: "PINCODE MUST BE 6 DIGITS" });
+
+        const user = await User.findOne({ phone: String(phone) });
+        if (!user) {
+            return res.status(404).json({
+                message: "NO USER FOUND WITH THIS PHONE NUMBER. PLEASE COMPLETE THE REGISTRATION FORM FIRST."
+            });
         }
 
-        const userAge = calculateAge(dob);
-        if (userAge === null) return res.status(400).json({ message: "INVALID DOB" });
+        const userAge = user.age || calculateAge(user.dob);
+        if (!userAge || !user.income || !user.loan_amount || !user.employment_type) {
+            return res.status(400).json({
+                message: "USER PROFILE IS INCOMPLETE FOR ELIGIBILITY CHECK"
+            });
+        }
 
-        const user = {
-            name, phone, email, pan, dob, age: userAge,
-            income: Number(income), loan_amount: Number(loan_amount),
-            employment_type, pincode, city, state
+        const userForEligibility = {
+            ...user.toObject(),
+            age: userAge,
+            income: Number(user.income),
+            loan_amount: Number(user.loan_amount)
         };
 
         const companies = await Company.find();
-        const eligibleCompanies = companies.filter(company => isUserEligibleForCompany(user, company));
+        const eligibleCompanies = companies.filter(company => isUserEligibleForCompany(userForEligibility, company));
 
         return res.status(200).json({
             success: true,
             message: eligibleCompanies.length > 0 ? "ELIGIBLE COMPANIES FOUND" : "NO ELIGIBLE COMPANY FOUND FOR THIS USER",
-            user,
+            user: userForEligibility,
             companiesChecked: companies.length,
             total: eligibleCompanies.length,
             eligible_companies: eligibleCompanies
@@ -321,7 +303,7 @@ module.exports = {
     getCompanies,
     compareLiveLoans,
     getCompanyById,
-    applyWithPhone, // Exported new popup verification workflow handler
+    applyWithPhone,
     updateCompany,
     removeCompany
 };
