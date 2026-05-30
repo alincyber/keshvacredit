@@ -27,7 +27,17 @@ const createuser = async (req, res) => {
         message: "PLEASE ENTER ALL THE DETAILS"
       });
     }
+// Check if PAN already exists
+const existingUser = await User.findOne({
+  pan: req.body.pan
+});
 
+if (existingUser) {
+  return res.status(409).json({
+    success: false,
+    message: "User already exists with this PAN number"
+  });
+}
     // Phone validations
     if (phone.length !== 10) {
       return res.status(400).json({
