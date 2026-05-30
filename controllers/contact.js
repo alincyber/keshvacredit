@@ -1,4 +1,5 @@
 const Contact = require('../model/contactmodel');
+const logger = require("../config/logger");
 const createcontact = async(req,res)=>{
     try{
         const{name,email,phone,message}=req.body;
@@ -28,7 +29,7 @@ const createcontact = async(req,res)=>{
     });
     return res.status(201).json({message:"CONTACT CREATED SUCCESSFULLY",contact});
   } catch (error) {
-    console.error("Error creating contact:", error);
+    logger.error({ err: error }, "Error creating contact");
     return res.status(500).json({ message: "INTERNAL SERVER ERROR" });
   }};
   module.exports={

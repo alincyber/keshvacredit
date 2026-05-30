@@ -1,5 +1,6 @@
 const generateOTP = require("../util/generateOTP.js");
 const otpStore = require("../data/otpstore.js");
+const logger = require("../config/logger");
 
 const sendOTP = (req, res) => {
   const { phone } = req.body;
@@ -35,7 +36,7 @@ const sendOTP = (req, res) => {
     expiresAt: Date.now() + 5 * 60 * 1000,
   };
 
-  console.log(`OTP for ${phone}: ${otp}`);
+  logger.info({ phone: "[REDACTED]" }, "OTP generated");
 
   res.json({
     success: true,

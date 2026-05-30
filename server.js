@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const logger = require("./config/logger");
+const requestLogger = require("./middleware/logger");
 
 const dns = require("dns");
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
@@ -13,6 +15,7 @@ const loanroutes = require("./routes/loanroutes");
 const companyroutes = require("./routes/companyroutes");
 const contactroutes = require("./routes/contactroute");
 const connectDB = require("./config/db");
+app.use(requestLogger);
 app.use(express.static("public"));
 app.use(cors());
 app.use(express.json());
@@ -69,5 +72,5 @@ app.get("/read", (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  logger.info(`Server running on http://localhost:${PORT}`);
 });
