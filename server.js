@@ -13,6 +13,7 @@ const otpRoutes = require("./routes/otpRoutes");
 const loginroutes = require("./routes/loginroutes");
 const loanroutes = require("./routes/loanroutes");
 const companyroutes = require("./routes/companyroutes");
+const businessroutes = require("./routes/businessroutes");
 const contactroutes = require("./routes/contactroute");
 const connectDB = require("./config/db");
 app.use(requestLogger);
@@ -26,6 +27,7 @@ app.use("/api", loginroutes);
 app.use("/api", otpRoutes);
 app.use("/api/loan", loanroutes);
 app.use("/api/company", companyroutes);
+app.use("/api/business", businessroutes);
 
 app.get("/", (req, res) => {
     res.send(`

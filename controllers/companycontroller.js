@@ -5,7 +5,9 @@ const mongoose = require("mongoose");
 // ─────────────────────────────────────────
 // HELPER: Calculate Age
 // ─────────────────────────────────────────
+
 const calculateAge = (dob) => {
+
     const birthDate = new Date(dob);
 
     if (isNaN(birthDate.getTime())) return null;
@@ -52,7 +54,11 @@ const addCompany = async (req, res) => {
             min_income,
             max_loan,
             interest_rate,
-            allowed_employment
+            loan_types,
+            allowed_employment,
+            allowed_business_types,
+            min_business_age,
+            max_business_age
         } = req.body;
 
         // Required checks
@@ -70,8 +76,20 @@ const addCompany = async (req, res) => {
         if (isNaN(min_income)) return res.status(400).json({ message: "MIN INCOME MUST BE A NUMBER" });
         if (isNaN(max_loan)) return res.status(400).json({ message: "MAX LOAN MUST BE A NUMBER" });
         if (isNaN(interest_rate)) return res.status(400).json({ message: "INTEREST RATE MUST BE A NUMBER" });
+        if (loan_types && !Array.isArray(loan_types)) {
+            return res.status(400).json({ message: "LOAN TYPES MUST BE AN ARRAY" });
+        }
         if (!Array.isArray(allowed_employment)) {
             return res.status(400).json({ message: "ALLOWED EMPLOYMENT MUST BE AN ARRAY" });
+        }
+        if (allowed_business_types && !Array.isArray(allowed_business_types)) {
+            return res.status(400).json({ message: "ALLOWED BUSINESS TYPES MUST BE AN ARRAY" });
+        }
+        if (min_business_age !== undefined && isNaN(min_business_age)) {
+            return res.status(400).json({ message: "MIN BUSINESS AGE MUST BE A NUMBER" });
+        }
+        if (max_business_age !== undefined && isNaN(max_business_age)) {
+            return res.status(400).json({ message: "MAX BUSINESS AGE MUST BE A NUMBER" });
         }
 
         // Duplicate check
@@ -88,7 +106,11 @@ const addCompany = async (req, res) => {
             min_income,
             max_loan,
             interest_rate,
-            allowed_employment
+            loan_types: loan_types || [],
+            allowed_employment,
+            allowed_business_types: allowed_business_types || [],
+            min_business_age,
+            max_business_age
         });
 
         await company.save();
@@ -106,18 +128,18 @@ const addCompany = async (req, res) => {
 // ─────────────────────────────────────────
 // GET ALL COMPANIES
 // ─────────────────────────────────────────
-const getCompanies = async (req, res) => {
-    try {
-        const companies = await Company.find();
-        return res.status(200).json({
-            success: true,
-            total: companies.length,
-            data: companies
-        });
-    } catch (error) {
-        return res.status(500).json({ message: "INTERNAL SERVER ERROR", error: error.message });
-    }
-};
+// const getCompanies = async (req, res) => {
+//     try {
+//         const companies = await Company.find();
+//         return res.status(200).json({
+//             success: true,
+//             total: companies.length,
+//             data: companies
+//         });
+//     } catch (error) {
+//         return res.status(500).json({ message: "INTERNAL SERVER ERROR", error: error.message });
+//     }
+// };
 
 // ─────────────────────────────────────────
 // GET COMPANY BY ID
@@ -300,8 +322,8 @@ const removeCompany = async (req, res) => {
 
 module.exports = {
     addCompany,
-    getCompanies,
-    compareLiveLoans,
+    // getCompanies,
+    // compareLiveLoans,
     getCompanyById,
     applyWithPhone,
     updateCompany,

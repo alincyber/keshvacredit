@@ -9,7 +9,12 @@ const companySchema = new Schema({
     min_income: { type: Number },
     max_loan: { type: Number },
     interest_rate: { type: Number },
-    allowed_employment: [{ type: String }]
+    loan_types: [{ type: String }],
+    allowed_employment: [{ type: String }],
+    allowed_business_types: [{ type: String }],
+    min_business_age: { type: Number },
+    max_business_age: { type: Number }
+
 }, { versionKey: false });
 
 module.exports = model("Company", companySchema, "companies");
