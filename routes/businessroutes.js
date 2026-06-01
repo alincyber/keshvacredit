@@ -10,7 +10,6 @@ const {
   updateBusinessLoan,
   removeBusinessLoan
 } = require("../controllers/businesscontroller");
-
 router.post("/add", addBusinessLoan);
 router.get("/", getBusinessLoans);
 router.post("/compare-live", compareLiveBusinessLoans);
