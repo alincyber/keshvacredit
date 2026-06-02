@@ -18,7 +18,7 @@ const isBusinessEligibleForLender = (business, lender) => {
 
     // 3. Check if requested loan amount is within lender boundaries
     const loanOk = lender.business_loan_amount 
-        ? Number(business.business_loan_amount) <= Number(lender.business_loan_amount) 
+        ? Number(business.business_loan_amount) <= Number(lender.business_loan_amount)  
         : true;
 
     // 4. Validate matching business structures/industries (case-insensitive string match)
