@@ -1,4 +1,25 @@
 const businessman = require("../model/businessmodel");
+const BusinessLender = require("../model/businesslender");
+
+const isBusinessEligibleForLender = (business, lender) => {
+    const ageOk = lender.business_age
+        ? Number(business.business_age) >= Number(lender.business_age)
+        : true;
+
+    const revenueOk = lender.annual_revenue
+        ? Number(business.annual_revenue) >= Number(lender.annual_revenue)
+        : true;
+
+    const loanOk = lender.business_loan_amount
+        ? Number(business.business_loan_amount) <= Number(lender.business_loan_amount)
+        : true;
+
+    const typeOk = !lender.business_type ||
+        String(lender.business_type).toLowerCase() === String(business.business_type || "").toLowerCase();
+
+    return ageOk && revenueOk && loanOk && typeOk;
+};
+
 const createbusinessman = async (req, res) => {
     try {
         const {
@@ -92,10 +113,22 @@ const createbusinessman = async (req, res) => {
         });
 
         const savedBusiness = await business.save();
+        const businessData = {
+            ...savedBusiness.toObject(),
+            business_age: Number(savedBusiness.business_age),
+            annual_revenue: Number(savedBusiness.annual_revenue),
+            business_loan_amount: Number(savedBusiness.business_loan_amount)
+        };
+
+        const lenders = await BusinessLender.find();
+        const eligibleLenders = lenders.filter((lender) => isBusinessEligibleForLender(businessData, lender));
 
         return res.status(201).json({
             message: "BUSINESS ADDED SUCCESSFULLY",
-            data: savedBusiness
+            data: savedBusiness,
+            lendersChecked: lenders.length,
+            total_matches: eligibleLenders.length,
+            eligible_lenders: eligibleLenders
         });
 
     } catch (error) {
