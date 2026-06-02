@@ -125,36 +125,6 @@ const addCompany = async (req, res) => {
     }
 };
 
-// ─────────────────────────────────────────
-// GET ALL COMPANIES
-// ─────────────────────────────────────────
-// const getCompanies = async (req, res) => {
-//     try {
-//         const companies = await Company.find();
-//         return res.status(200).json({
-//             success: true,
-//             total: companies.length,
-//             data: companies
-//         });
-//     } catch (error) {
-//         return res.status(500).json({ message: "INTERNAL SERVER ERROR", error: error.message });
-//     }
-// };
-
-// ─────────────────────────────────────────
-// GET COMPANY BY ID
-// ─────────────────────────────────────────
-const getCompanyById = async (req, res) => {
-    try {
-        const company = await Company.findById(req.params.id);
-        if (!company) {
-            return res.status(404).json({ message: "COMPANY NOT FOUND" });
-        }
-        return res.status(200).json({ success: true, data: company });
-    } catch (error) {
-        return res.status(500).json({ message: "INTERNAL SERVER ERROR", error: error.message });
-    }
-};
 
 // ─────────────────────────────────────────
 // COMPARE LIVE LOANS (Find saved user by phone)
@@ -207,62 +177,32 @@ const compareLiveLoans = async (req, res) => {
     }
 };
 
-// // ─────────────────────────────────────────
-// // NEW FEATURE: APPLY VIA POPUP (BY PHONE)
-// // ─────────────────────────────────────────
-// const applyWithPhone = async (req, res) => {
-//     try {
-//         const { phone, company_id } = req.body;
-
-//         if (!phone) return res.status(400).json({ message: "PHONE NUMBER IS REQUIRED" });
-//         if (!company_id) return res.status(400).json({ message: "COMPANY ID IS REQUIRED" });
-
-//         // 1. Grab user data from database collection matching the verified phone number
-//         const user = await User.findOne({ phone });
-//         if (!user) {
-//             return res.status(404).json({ 
-//                 message: "NO PROFILE FOUND WITH THIS PHONE NUMBER. PLEASE COMPLETE THE REGISTRATION FORM FIRST." 
-//             });
-//         }
-
-//         // 2. Locate targeted lender profile properties via ID parameter reference
-//         const company = await Company.findById(company_id);
-//         if (!company) {
-//             return res.status(404).json({ message: "SELECTED LENDER PROFILE NOT FOUND" });
-//         }
-
-//         // 3. Verify parameters
-//         const isEligible = isUserEligibleForCompany(user, company);
-
-//         if (!isEligible) {
-//             return res.status(200).json({
-//                 success: false,
-//                 message: `APPLICATION DECLINED: PROFILE CRITERIA DOES NOT MATCH ${company.company_name.toUpperCase()} REQUIREMENT POLICIES.`
-//             });
-//         }
-
-//         return res.status(200).json({
-//             success: true,
-//             message: `ELIGIBILITY CONFIRMED! YOU QUALIFY FOR AN APPLICATION WITH ${company.company_name.toUpperCase()}.`,
-//             user_summary: {
-//                 name: user.name,
-//                 phone: user.phone,
-//                 requested_loan: user.loan_amount
-//             },
-//             lender_summary: {
-//                 company_name: company.company_name,
-//                 interest_rate: company.interest_rate
-//             }
-//         });
-
-//     } catch (error) {
-//         return res.status(500).json({ message: "INTERNAL SERVER ERROR", error: error.message });
-//     }
-// };
-
 // ─────────────────────────────────────────
 // UPDATE COMPANY (FIXED & TESTED)
 // ─────────────────────────────────────────
+const getCompanyById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "INVALID COMPANY ID" });
+        }
+
+        const company = await Company.findById(id);
+        if (!company) {
+            return res.status(404).json({ message: "COMPANY NOT FOUND" });
+        }
+
+        return res.status(200).json({
+            message: "COMPANY FOUND SUCCESSFULLY",
+            data: company
+        });
+
+    } catch (error) {
+        return res.status(500).json({ message: "INTERNAL SERVER ERROR", error: error.message });
+    }
+};
+
 const updateCompany = async (req, res) => {
     try {
         const { company_name, ...updateData } = req.body;
@@ -319,10 +259,8 @@ const removeCompany = async (req, res) => {
 
 module.exports = {
     addCompany,
-    // getCompanies,
     compareLiveLoans,
     getCompanyById,
-    // applyWithPhone,
     updateCompany,
     removeCompany
 };

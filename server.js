@@ -14,6 +14,7 @@ const loginroutes = require("./routes/loginroutes");
 const loanroutes = require("./routes/loanroutes");
 const companyroutes = require("./routes/companyroutes");
 const businessroutes = require("./routes/businessroutes");
+const businesslenderroutes = require("./routes/businesslenderroutes");
 const contactroutes = require("./routes/contactroute");
 const connectDB = require("./config/db");
 app.use(requestLogger);
@@ -28,6 +29,8 @@ app.use("/api", otpRoutes);
 app.use("/api/loan", loanroutes);
 app.use("/api/company", companyroutes);
 app.use("/api/business", businessroutes);
+app.use("/api/business-lender", businesslenderroutes);
+
 
 app.get("/", (req, res) => {
     res.send(`

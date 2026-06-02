@@ -11,7 +11,6 @@ const companySchema = new Schema({
     interest_rate: { type: Number },
     loan_types: [{ type: String }],
     allowed_employment: [{ type: String }],
-    allowed_business_types: [{ type: String }],
     min_business_age: { type: Number },
     max_business_age: { type: Number }
 
