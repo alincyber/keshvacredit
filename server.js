@@ -16,6 +16,9 @@ const companyroutes = require("./routes/companyroutes");
 const businessroutes = require("./routes/businessroutes");
 const businesslenderroutes = require("./routes/businesslenderroutes");
 const contactroutes = require("./routes/contactroute");
+const goldroutes = require("./routes/goldroutes");
+const goldlenderss = require("./routes/goldlenderroute");
+
 const connectDB = require("./config/db");
 app.use(requestLogger);
 app.use(express.static("public"));
@@ -30,6 +33,9 @@ app.use("/api/loan", loanroutes);
 app.use("/api/company", companyroutes);
 app.use("/api/business", businessroutes);
 app.use("/api/business-lender", businesslenderroutes);
+app.use("/api/gold-loan", goldroutes);
+app.use("/api/goldlender", goldlenderss);
+
 
 
 app.get("/", (req, res) => {

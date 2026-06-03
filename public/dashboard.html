@@ -104,7 +104,7 @@
 
     .tabs {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 8px;
       margin-bottom: 14px;
     }
@@ -286,6 +286,7 @@
           <button class="tab active" type="button" data-tab="users">Users</button>
           <button class="tab" type="button" data-tab="contacts">Contact</button>
           <button class="tab" type="button" data-tab="companies">Company</button>
+          <button class="tab" type="button" data-tab="gold">Gold</button>
           <button class="tab" type="button" data-tab="otp">OTP</button>
         </div>
 
@@ -350,6 +351,67 @@
           </div>
         </form>
 
+        <form id="gold" class="group">
+          <div class="quick">
+            <button class="secondary" type="button" data-request="getGoldLoans">Get Loans</button>
+            <button class="secondary" type="button" data-request="getGoldLenders">Get Lenders</button>
+            <button class="secondary" type="button" data-request="compareGoldApplicant">Match Applicant</button>
+            <button class="secondary" type="button" data-request="compareGoldLender">Match Lender</button>
+            <button class="danger" type="button" data-request="removeGoldLoan">Delete Loan</button>
+            <button class="danger" type="button" data-request="removeGoldLender">Delete Lender</button>
+          </div>
+
+          <h2>Applicant</h2>
+          <div class="grid-2">
+            <label>Owner Name<input name="owner_name" value="Gold Applicant"></label>
+            <label>Owner Phone<input name="owner_phone" value="9876543210"></label>
+            <label>Owner Email<input name="owner_email" value="gold@gmail.com"></label>
+            <label>Owner PAN<input name="owner_pan" value="ABCDE1234F"></label>
+            <label>Owner Age<input name="owner_age" value="32"></label>
+            <label>Loan Amount<input name="gold_loan_amount" value="150000"></label>
+            <label>Loan Purpose<input name="loan_purpose" value="personal"></label>
+            <label>Gold Weight<input name="gold_weight" value="50"></label>
+            <label>Gold Purity<input name="gold_purity" value="22"></label>
+            <label>Gold Value<input name="gold_value" value="250000"></label>
+            <label>Gold Form
+              <select name="gold_form">
+                <option>jewellery</option>
+                <option>coin</option>
+                <option>bar</option>
+              </select>
+            </label>
+          </div>
+          <div class="actions">
+            <button class="primary" type="button" data-request="addGoldLoan">Add Gold Loan</button>
+            <button class="secondary" type="button" data-request="updateGoldLoan">Update Gold Loan</button>
+          </div>
+
+          <h2>Lender</h2>
+          <div class="grid-2">
+            <label>Lender Name<input name="onwer_name" value="Demo Gold Finance"></label>
+            <label>Lender Phone<input name="lender_owner_phone" value="9123456780"></label>
+            <label>Lender Email<input name="lender_owner_email" value="lender@gmail.com"></label>
+            <label>Lender PAN<input name="lender_owner_pan" value="LMNOP1234Q"></label>
+            <label>Max Loan Amount<input name="lender_loan_amount" value="300000"></label>
+            <label>Interest Rate<input name="lender_interest_rate" value="11"></label>
+            <label>Loan Purpose<input name="lender_loan_purpose" value="personal"></label>
+            <label>Min Gold Weight<input name="lender_gold_weight" value="20"></label>
+            <label>Min Gold Purity<input name="lender_gold_purity" value="18"></label>
+            <label>Min Gold Value<input name="lender_gold_value" value="100000"></label>
+            <label>Accepted Form
+              <select name="lender_gold_form">
+                <option>jewellery</option>
+                <option>coin</option>
+                <option>bar</option>
+              </select>
+            </label>
+          </div>
+          <div class="actions">
+            <button class="primary" type="button" data-request="addGoldLender">Add Gold Lender</button>
+            <button class="secondary" type="button" data-request="updateGoldLender">Update Gold Lender</button>
+          </div>
+        </form>
+
         <form id="otp" class="group">
           <label>Phone<input name="phone" value="9876543210"></label>
           <label>OTP<input name="otp" placeholder="Enter OTP returned by send-otp"></label>
@@ -384,6 +446,7 @@
       users: document.getElementById("users"),
       contacts: document.getElementById("contacts"),
       companies: document.getElementById("companies"),
+      gold: document.getElementById("gold"),
       otp: document.getElementById("otp")
     };
 
@@ -433,10 +496,47 @@
       return data;
     }
 
+    function goldLoanBody() {
+      const data = formData(forms.gold);
+      numberFields(data, ["owner_age", "gold_loan_amount", "gold_weight", "gold_purity", "gold_value"]);
+      return {
+        owner_name: data.owner_name,
+        owner_email: data.owner_email,
+        owner_phone: data.owner_phone,
+        owner_pan: data.owner_pan,
+        owner_age: data.owner_age,
+        gold_loan_amount: data.gold_loan_amount,
+        loan_purpose: data.loan_purpose,
+        gold_weight: data.gold_weight,
+        gold_purity: data.gold_purity,
+        gold_value: data.gold_value,
+        gold_form: data.gold_form
+      };
+    }
+
+    function goldLenderBody() {
+      const data = formData(forms.gold);
+      numberFields(data, ["lender_loan_amount", "lender_interest_rate", "lender_gold_weight", "lender_gold_purity", "lender_gold_value"]);
+      return {
+        onwer_name: data.onwer_name,
+        owner_email: data.lender_owner_email,
+        owner_phone: data.lender_owner_phone,
+        owner_pan: data.lender_owner_pan,
+        loan_amount: data.lender_loan_amount,
+        interest_rate: data.lender_interest_rate,
+        loan_purpose: data.lender_loan_purpose,
+        gold_weight: data.lender_gold_weight,
+        gold_purity: data.lender_gold_purity,
+        gold_value: data.lender_gold_value,
+        gold_form: data.lender_gold_form
+      };
+    }
+
     function buildRequest(key) {
       const users = formData(forms.users);
       const contacts = formData(forms.contacts);
       const companies = formData(forms.companies);
+      const gold = formData(forms.gold);
       const otp = formData(forms.otp);
 
       const map = {
@@ -451,6 +551,16 @@
         updateCompany: ["PUT", "/api/company/update-by-name", companyBody()],
         removeCompany: ["DELETE", "/api/company/delete-by-name", { company_name: companies.company_name }],
         compareLive: ["POST", "/api/company/compare-live", { phone: companies.phone }],
+        getGoldLoans: ["GET", "/api/gold-loan"],
+        addGoldLoan: ["POST", "/api/gold-loan/add", goldLoanBody()],
+        updateGoldLoan: ["PUT", "/api/gold-loan/update", goldLoanBody()],
+        removeGoldLoan: ["DELETE", "/api/gold-loan/delete", { owner_phone: gold.owner_phone }],
+        compareGoldApplicant: ["POST", "/api/gold-loan/compare-live", { owner_phone: gold.owner_phone }],
+        getGoldLenders: ["GET", "/api/gold-lender"],
+        addGoldLender: ["POST", "/api/gold-lender/add", goldLenderBody()],
+        updateGoldLender: ["PUT", "/api/gold-lender/update", goldLenderBody()],
+        removeGoldLender: ["DELETE", "/api/gold-lender/delete", { owner_phone: gold.lender_owner_phone }],
+        compareGoldLender: ["POST", "/api/gold-lender/compare-live", { owner_phone: gold.lender_owner_phone }],
         sendOtp: ["POST", "/api/send-otp", { phone: otp.phone }],
         verifyOtp: ["POST", "/api/verify-otp", { phone: otp.phone, otp: otp.otp }]
       };
