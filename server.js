@@ -20,6 +20,8 @@ const goldroutes = require("./routes/goldroutes");
 const goldlenderss = require("./routes/goldlenderroute");
 const personalRoutes = require("./routes/personalroute");
 const personalLoanRoutes = require("./routes/personalenderroutes");
+const homeLoanRoutes = require("./routes/homeloanroute");
+const homeLoanLenderRoutes = require("./routes/homeloanlenderroutes");
 const connectDB = require("./config/db");
 app.use(requestLogger);
 app.use(express.static("public"));
@@ -38,7 +40,8 @@ app.use("/api/gold-loan", goldroutes);
 app.use("/api/goldlender", goldlenderss);
 app.use("/api/personal-loan", personalRoutes);
 app.use("/api/personal-lender", personalLoanRoutes);
-
+app.use("/api/home-loan", homeLoanRoutes);
+app.use("/api/home-loan-lender", homeLoanLenderRoutes);
 app.get("/", (req, res) => {
     res.send(`
         <html>
