@@ -1,6 +1,4 @@
 const User = require("../model/userdata");
-const jwt = require("jsonwebtoken");
-
 const createuser = async (req, res) => {
   try {
     const {
@@ -270,20 +268,8 @@ if (existingUser) {
       { upsert: true, returnDocument: "after", runValidators: true }
     );
 
-    if (!process.env.JWT_SECRET) {
-      return res.status(500).json({
-        message: "JWT SECRET IS NOT CONFIGURED"
-      });
-    }
-
-    const token = jwt.sign(
-      { userId: savedUser._id, phone: savedUser.phone },
-      process.env.JWT_SECRET,
-    );
-
     return res.status(201).json({
       message: "USER PROFILE SYNCHRONIZED SUCCESSFULLY",
-      token,
       data: savedUser
     });
 
