@@ -32,7 +32,6 @@ const createGoldLoan = async (req, res) => {
             owner_phone,
             owner_pan,
             owner_age,
-            lender_name,
             gold_loan_amount,
             interest_rate,
             loan_purpose,
@@ -44,7 +43,7 @@ const createGoldLoan = async (req, res) => {
         } = req.body;
 
         if (
-              !owner_name|| !owner_email|| !owner_phone|| !owner_pan|| !owner_age|| !lender_name|| !gold_loan_amount|| !interest_rate|| !loan_purpose|| !gold_weight|| !gold_purity|| !gold_value|| !gold_type || !gold_form
+              !owner_name|| !owner_email|| !owner_phone|| !owner_pan|| !owner_age|| !gold_loan_amount|| !interest_rate|| !loan_purpose|| !gold_weight|| !gold_purity|| !gold_value|| !gold_type || !gold_form
         ) {
             return res.status(400).json({
                 message: "PLEASE ENTER ALL THE DETAILS"
@@ -89,7 +88,6 @@ const createGoldLoan = async (req, res) => {
             owner_phone,
             owner_pan,
             owner_age,
-            lender_name,
             gold_loan_amount,
             loan_amount: gold_loan_amount,
             interest_rate,

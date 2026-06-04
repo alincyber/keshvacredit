@@ -7,7 +7,6 @@ const goldschema = new Schema({
     owner_phone: { type: String },
     owner_pan: { type: String },
     owner_age: { type: Number },
-    lender_name: { type: String },
     gold_loan_amount: { type: Number },
     loan_amount: { type: Number },
     interest_rate: { type: Number },

@@ -1,19 +1,20 @@
-const mongoose = requre("mongoose");
-const {model,Schema}=mongoose;
+const mongoose = require("mongoose");
+const { model, Schema } = mongoose;
 
-const personalschema= new Schema({
-    customer_name:{type:String},
-    customer_email:{type:String},
-    customer_phone:{type:Number},
-    customer_pan:{type:String},
-    customer_dob:{type:Date},
-    customer_loan_amount:{type:Number},
-    customer_loan_purpose:{type:String},
-    customer_address:{type:String},
-    customer_city:{type:String},
-    customer_state:{type:String},
-    customer_country:{type:String},
-    customer_pin_code:{type:Number},
-},{versionKey:false});
+const personalSchema = new Schema({
+    person_name: { type: String },
+    person_email: { type: String },
+    person_phone: { type: String },
+    person_pan: { type: String },
+    person_dob: { type: Date },
+    person_aadhar: { type: String },
+    person_name_as_per_aadhar: { type: String },
+    employment_type: { type: String },
+    person_age: { type: Number },
+    loan_purpose: { type: String },
+    annual_income: { type: Number },
+    person_location: { type: String },
+    personal_loan_amount: { type: Number }
+}, { versionKey: false });
 
-module.exports = model("Personal", personalschema,"Personal");
+module.exports = model("Personal", personalSchema, "Personal");
