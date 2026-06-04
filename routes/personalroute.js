@@ -7,7 +7,7 @@ const {
     updateUserByPan,
     deletePersonByPan,
     getPerson
-} = require("../controllers/personalController");
+} = require("../controllers/personalcontroller");
 
 router.post("/create-user", createPersonalUser);
 router.post("/compare-user", compareUserByPhone);
