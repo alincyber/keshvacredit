@@ -35,7 +35,6 @@ app.use("/api",contactroutes);
 app.use("/api", loginroutes);
 app.use("/api", otpRoutes);
 
-app.use(verifyToken);
 
 app.use("/api/loan", loanroutes);
 app.use("/api/company", companyroutes);

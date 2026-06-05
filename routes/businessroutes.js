@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const verifyToken = require("../middleware/auth");
 
 const {
     createbusinessman,
@@ -7,8 +8,8 @@ const {
     updatebusinessman
 } = require("../controllers/businessmancontroller");
 
-router.post("/createbusinessman", createbusinessman);
-router.get("/businessmen", getbusinessman);
-router.put("/updatebusinessman", updatebusinessman);
+router.post("/createbusinessman", verifyToken, createbusinessman);
+router.get("/businessmen", verifyToken, getbusinessman);
+router.put("/updatebusinessman", verifyToken, updatebusinessman);
 
 module.exports = router;
