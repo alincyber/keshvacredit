@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const verifyToken = require("../middleware/auth");
 const {
     createHomeLoan,
     compareHomeLoanByPhone,
@@ -10,11 +9,11 @@ const {
     getAllHomeLoans
 } = require("../controllers/homeloancontrolller");
 
-router.post("/add", verifyToken, createHomeLoan);
-router.post("/compare", verifyToken, compareHomeLoanByPhone);
-router.post("/get-by-phone", verifyToken, getHomeLoanByPhone);
-router.put("/update", verifyToken, updateHomeLoanByPan);
-router.delete("/delete", verifyToken, deleteHomeLoanByPan);
-router.get("/all", verifyToken, getAllHomeLoans);
+router.post("/add", createHomeLoan);
+router.post("/compare", compareHomeLoanByPhone);
+router.post("/get-by-phone", getHomeLoanByPhone);
+router.put("/update", updateHomeLoanByPan);
+router.delete("/delete", deleteHomeLoanByPan);
+router.get("/all", getAllHomeLoans);
 
 module.exports = router;

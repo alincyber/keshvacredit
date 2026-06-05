@@ -3,7 +3,6 @@ const cors = require("cors");
 require("dotenv").config();
 const logger = require("./config/logger");
 const requestLogger = require("./middleware/logger");
-const verifyToken = require('./middleware/auth');
 const dns = require("dns");
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 const app = express();

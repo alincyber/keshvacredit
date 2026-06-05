@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const verifyToken = require("../middleware/auth");
 const {
     addPersonalUser,
     getPersonById,
@@ -10,12 +9,12 @@ const {
     removePersonByPan,
     getAllPersonalUsers
 } = require("../controllers/personalloanlender");
-router.post("/add", verifyToken, addPersonalUser);
-router.post("/get-by-id/:id", verifyToken, getPersonById);
-router.post("/get-by-phone", verifyToken, getPersonByPhone);
-router.post("/compare", verifyToken, comparePersonalLoans);
-router.put("/update", verifyToken, updatePersonByPan);
-router.delete("/remove", verifyToken, removePersonByPan);
-router.get("/all", verifyToken, getAllPersonalUsers);
+router.post("/add", addPersonalUser);
+router.post("/get-by-id/:id", getPersonById);
+router.post("/get-by-phone", getPersonByPhone);
+router.post("/compare", comparePersonalLoans);
+router.put("/update", updatePersonByPan);
+router.delete("/remove", removePersonByPan);
+router.get("/all", getAllPersonalUsers);
 
 module.exports = router;

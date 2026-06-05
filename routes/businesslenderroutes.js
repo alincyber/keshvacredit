@@ -1,5 +1,4 @@
 const express = require("express");
-const verifyToken = require("../middleware/auth");
 const router = express.Router();
 
 const {
@@ -10,10 +9,10 @@ const {
     removeBusinessLender
 } = require("../controllers/businesslendercontroller");
 
-router.post("/add", verifyToken, addBusinessLender);
-router.post("/compare-live", verifyToken, compareBusinessLoans);
-router.get("/:id", verifyToken, getLenderById);
-router.put("/update", verifyToken, updateBusinessLender);
-router.delete("/delete", verifyToken, removeBusinessLender);
+router.post("/add", addBusinessLender);
+router.post("/compare-live", compareBusinessLoans);
+router.get("/:id", getLenderById);
+router.put("/update", updateBusinessLender);
+router.delete("/delete", removeBusinessLender);
 
 module.exports = router;

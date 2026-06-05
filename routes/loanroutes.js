@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const verifyToken = require("../middleware/auth");
 
 const {
    compareLoans,
    compareLiveLoans
 } = require("../controllers/loancontroller");
 
-router.post("/compare-live", verifyToken, compareLiveLoans);
-router.get("/compare/:id", verifyToken, compareLoans);
+router.post("/compare-live", compareLiveLoans);
+router.get("/compare/:id", compareLoans);
 
 module.exports = router;
