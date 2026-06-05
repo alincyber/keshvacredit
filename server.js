@@ -22,6 +22,7 @@ const personalRoutes = require("./routes/personalroute");
 const personalLoanRoutes = require("./routes/personalenderroutes");
 const homeLoanRoutes = require("./routes/homeloanroute");
 const homeLoanLenderRoutes = require("./routes/homeloanlenderroutes");
+const partnershipRoutes = require("./routes/partnerroutes");
 const connectDB = require("./config/db");
 app.use(requestLogger);
 app.use(express.static("public"));
@@ -33,8 +34,6 @@ connectDB();
 app.use("/api",contactroutes);
 app.use("/api", loginroutes);
 app.use("/api", otpRoutes);
-
-
 app.use("/api/loan", loanroutes);
 app.use("/api/company", companyroutes);
 app.use("/api/business", businessroutes);
@@ -45,6 +44,7 @@ app.use("/api/personal-loan", personalRoutes);
 app.use("/api/personal-lender", personalLoanRoutes);
 app.use("/api/home-loan", homeLoanRoutes);
 app.use("/api/home-loan-lender", homeLoanLenderRoutes);
+app.use("/api/partnership", partnershipRoutes);
 app.get("/", (req, res) => {
     res.send(`
         <html>
