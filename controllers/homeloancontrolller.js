@@ -1,27 +1,24 @@
 const HomeLoan = require("../model/homeloanmodel");
 const HomeLoanLender = require("../model/homeloanlendermodel");
 
-// Helper: Check eligibility
+
 const isApplicantEligibleForLender = (applicant, lender) => {
-    // Age check
+
     const ageOk = applicant.applicant_age >= lender.min_applicant_age && 
                   applicant.applicant_age <= lender.max_applicant_age;
     
-    // Income check
+
     const incomeOk = applicant.annual_income >= lender.min_annual_income;
-    
-    // Loan amount check
+
     const loanOk = applicant.loan_amount_requested >= lender.min_loan_amount && 
                    applicant.loan_amount_requested <= lender.max_loan_amount;
     
-    // Property value check
     const propertyOk = !lender.min_property_value || 
                        applicant.property_value >= lender.min_property_value;
     
     return ageOk && incomeOk && loanOk && propertyOk;
 };
 
-// 1. CREATE HOME LOAN APPLICATION
 const createHomeLoan = async (req, res) => {
     try {
         const {
@@ -49,7 +46,7 @@ const createHomeLoan = async (req, res) => {
             down_payment
         } = req.body;
 
-        // Validation - Check required fields
+
         if (!applicant_name || !applicant_email || !applicant_phone || !applicant_pan || 
             !applicant_aadhar || !applicant_dob || !applicant_age || !employment_type || 
             !applicant_location || !annual_income || !property_type || !property_address || 
@@ -61,7 +58,6 @@ const createHomeLoan = async (req, res) => {
             });
         }
 
-        // Check existing application
         const existingApplication = await HomeLoan.findOne({ 
             $or: [{ applicant_pan }, { applicant_phone }, { applicant_aadhar }] 
         });
@@ -73,7 +69,6 @@ const createHomeLoan = async (req, res) => {
             });
         }
 
-        // Phone validation
         if (String(applicant_phone).length !== 10 || isNaN(applicant_phone)) {
             return res.status(400).json({
                 success: false,
@@ -81,7 +76,6 @@ const createHomeLoan = async (req, res) => {
             });
         }
 
-        // Email validation
         if (!applicant_email.includes("@")) {
             return res.status(400).json({
                 success: false,
@@ -89,7 +83,7 @@ const createHomeLoan = async (req, res) => {
             });
         }
 
-        // Aadhar validation
+
         if (String(applicant_aadhar).length !== 12 || isNaN(applicant_aadhar)) {
             return res.status(400).json({
                 success: false,
@@ -97,7 +91,7 @@ const createHomeLoan = async (req, res) => {
             });
         }
 
-        // Age validation from DOB
+
         const birthDate = new Date(applicant_dob);
         const today = new Date();
         let calculatedAge = today.getFullYear() - birthDate.getFullYear();
@@ -120,7 +114,6 @@ const createHomeLoan = async (req, res) => {
             });
         }
 
-        // Create application
         const homeLoanObj = new HomeLoan({
             applicant_name,
             applicant_email,
@@ -148,7 +141,7 @@ const createHomeLoan = async (req, res) => {
 
         const savedApplication = await homeLoanObj.save();
         
-        // Find eligible lenders
+
         const lenders = await HomeLoanLender.find();
         
         const applicantData = {
@@ -184,7 +177,7 @@ const createHomeLoan = async (req, res) => {
     }
 };
 
-// 2. GET APPLICATION BY PHONE
+
 const getHomeLoanByPhone = async (req, res) => {
     try {
         const { applicant_phone } = req.body;
@@ -219,7 +212,7 @@ const getHomeLoanByPhone = async (req, res) => {
     }
 };
 
-// 3. COMPARE BY PHONE
+
 const compareHomeLoanByPhone = async (req, res) => {
     try {
         const { applicant_phone } = req.body;
@@ -269,7 +262,6 @@ const compareHomeLoanByPhone = async (req, res) => {
     }
 };
 
-// 4. UPDATE APPLICATION BY PAN
 const updateHomeLoanByPan = async (req, res) => {
     try {
         const { applicant_pan } = req.body;
@@ -309,7 +301,6 @@ const updateHomeLoanByPan = async (req, res) => {
     }
 };
 
-// 5. DELETE APPLICATION BY PAN
 const deleteHomeLoanByPan = async (req, res) => {
     try {
         const { applicant_pan } = req.body;
@@ -345,7 +336,6 @@ const deleteHomeLoanByPan = async (req, res) => {
     }
 };
 
-// 6. GET ALL APPLICATIONS
 const getAllHomeLoans = async (req, res) => {
     try {
         const applications = await HomeLoan.find();

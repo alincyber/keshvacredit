@@ -18,7 +18,7 @@ const createcontact = async(req,res)=>{
       });
     }
 
-    // Email validations
+
     if (!email.includes("@gmail") || !email.includes(".com")) {
       return res.status(400).json({
         message: "PLEASE ENTER A VALID GMAIL ADDRESS"

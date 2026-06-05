@@ -1,6 +1,6 @@
 const HomeLoanLender = require("../model/homeloanlendermodel");
 
-// 1. ADD HOME LOAN LENDER
+
 const addHomeLoanLender = async (req, res) => {
     try {
         const {
@@ -15,7 +15,6 @@ const addHomeLoanLender = async (req, res) => {
             interest_rate
         } = req.body;
 
-        // Required field assertions
         if (!lender_name) return res.status(400).json({ message: "LENDER NAME IS REQUIRED" });
         if (!min_loan_amount) return res.status(400).json({ message: "MINIMUM LOAN AMOUNT IS REQUIRED" });
         if (!max_loan_amount) return res.status(400).json({ message: "MAXIMUM LOAN AMOUNT IS REQUIRED" });
@@ -24,7 +23,6 @@ const addHomeLoanLender = async (req, res) => {
         if (!min_annual_income) return res.status(400).json({ message: "MINIMUM ANNUAL INCOME IS REQUIRED" });
         if (!interest_rate) return res.status(400).json({ message: "INTEREST RATE IS REQUIRED" });
 
-        // Duplicate check
         const existingLender = await HomeLoanLender.findOne({ lender_name });
         if (existingLender) {
             return res.status(409).json({ message: "HOME LOAN LENDER ALREADY EXISTS" });
@@ -59,7 +57,6 @@ const addHomeLoanLender = async (req, res) => {
     }
 };
 
-// 2. GET ALL LENDERS
 const getAllHomeLoanLenders = async (req, res) => {
     try {
         const lenders = await HomeLoanLender.find();
@@ -73,7 +70,6 @@ const getAllHomeLoanLenders = async (req, res) => {
     }
 };
 
-// 3. GET LENDER BY NAME
 const getLenderByName = async (req, res) => {
     try {
         const { lender_name } = req.body;
@@ -94,7 +90,6 @@ const getLenderByName = async (req, res) => {
     }
 };
 
-// 4. UPDATE LENDER
 const updateHomeLoanLender = async (req, res) => {
     try {
         const { lender_name, ...updateData } = req.body;
@@ -124,7 +119,6 @@ const updateHomeLoanLender = async (req, res) => {
     }
 };
 
-// 5. DELETE LENDER
 const deleteHomeLoanLender = async (req, res) => {
     try {
         const { lender_name } = req.body;

@@ -9,6 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 
+
 const otpRoutes = require("./routes/otpRoutes");
 const loginroutes = require("./routes/loginroutes");
 const loanroutes = require("./routes/loanroutes");
@@ -23,6 +24,7 @@ const personalLoanRoutes = require("./routes/personalenderroutes");
 const homeLoanRoutes = require("./routes/homeloanroute");
 const homeLoanLenderRoutes = require("./routes/homeloanlenderroutes");
 const partnershipRoutes = require("./routes/partnerroutes");
+const deleteUserRoutes = require("./routes/deleteuserroutes");
 const connectDB = require("./config/db");
 app.use(requestLogger);
 app.use(express.static("public"));
@@ -45,6 +47,7 @@ app.use("/api/personal-lender", personalLoanRoutes);
 app.use("/api/home-loan", homeLoanRoutes);
 app.use("/api/home-loan-lender", homeLoanLenderRoutes);
 app.use("/api/partnership", partnershipRoutes);
+app.use("/api", deleteUserRoutes);
 app.get("/", (req, res) => {
     res.send(`
         <html>

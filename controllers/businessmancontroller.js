@@ -106,8 +106,7 @@ const createbusinessman = async (req, res) => {
             business_loan_purpose,
             annual_revenue,
             business_location,
-            business_loan_amount,
-            Udyam_Registration_Number,
+            business_loan_amount,           Udyam_Registration_Number,
             gst_number,
             msme_registration_number
         });

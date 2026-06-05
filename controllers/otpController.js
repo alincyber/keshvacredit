@@ -1,6 +1,7 @@
 const generateOTP = require("../util/generateOTP.js");
 const otpStore = require("../data/otpstore.js");
 const logger = require("../config/logger");
+const jwt = require("jsonwebtoken");
 
 const sendOTP = (req, res) => {
   const { phone } = req.body;
@@ -12,23 +13,20 @@ const sendOTP = (req, res) => {
     });
   }
 
-  if (!phone) {
-    return res.status(400).json({
-      message: "Phone number required",
-    });
-  }
-
   if (phone.length !== 10) {
     return res.status(400).json({
+      success: false,
       message: "Phone number must be 10 digits",
     });
   }
 
   if (isNaN(phone)) {
     return res.status(400).json({
+      success: false,
       message: "Phone number must contain only numbers",
     });
   }
+
   const otp = generateOTP();
 
   otpStore[phone] = {
@@ -41,7 +39,7 @@ const sendOTP = (req, res) => {
   res.json({
     success: true,
     message: "OTP sent successfully",
-    otp, // remove in production
+    otp, 
   });
 };
 
@@ -73,12 +71,27 @@ const verifyOTP = (req, res) => {
     });
   }
 
+
+  const token = jwt.sign(
+    {
+      phone,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "7d",
+    }
+  );
+
   delete otpStore[phone];
 
   res.json({
     success: true,
     message: "OTP verified successfully",
+    token,
   });
 };
 
-module.exports = { sendOTP, verifyOTP,  };
+module.exports = {
+  sendOTP,
+  verifyOTP,
+};

@@ -26,7 +26,6 @@ const isGoldLoanEligibleForLender = (goldLoan, lender) => {
     return loanOk && weightOk && purityOk && valueOk && formOk;
 };
 
-// ADD LENDER 
 const addGoldLoanLender = async (req, res) => {
     try {
         const {
@@ -102,7 +101,7 @@ const addGoldLoanLender = async (req, res) => {
     }
 };
 
-// COMPARE LOANS
+
 const compareGoldLoans = async (req, res) => {
     try {
         const { owner_phone } = req.body;
@@ -170,7 +169,7 @@ const compareGoldLoans = async (req, res) => {
     }
 };
 
-// UPDATE LENDER
+
 const updateGoldLoanLender = async (req, res) => {
     try {
         const { lender_name } = req.body;
@@ -211,7 +210,6 @@ const updateGoldLoanLender = async (req, res) => {
     }
 };
 
-// DELETE LENDER
 const removeGoldLoanLender = async (req, res) => {
     try {
         const { lender_name } = req.body;
