@@ -15,5 +15,4 @@ router.post("/get-user", getPersonByPhone);
 router.post("/update-user", updateUserByPan);
 router.post("/delete-user", deletePersonByPan);
 router.post("/get-all", getPerson);
-// blank
 module.exports = router;

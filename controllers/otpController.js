@@ -1,10 +1,8 @@
 const generateOTP = require("../util/generateOTP.js");
 const otpStore = require("../data/otpstore.js");
 const logger = require("../config/logger");
-const jwt = require("jsonwebtoken");
-
 const sendOTP = (req, res) => {
-  const { phone } = req.body;
+const { phone } = req.body;
 
   if (!phone) {
     return res.status(400).json({
@@ -42,7 +40,6 @@ const sendOTP = (req, res) => {
     otp, 
   });
 };
-
 const verifyOTP = (req, res) => {
   const { phone, otp } = req.body;
 
@@ -71,26 +68,13 @@ const verifyOTP = (req, res) => {
     });
   }
 
-
-  const token = jwt.sign(
-    {
-      phone,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "7d",
-    }
-  );
-
   delete otpStore[phone];
 
-  res.json({
+  return res.json({
     success: true,
     message: "OTP verified successfully",
-    token,
   });
 };
-
 module.exports = {
   sendOTP,
   verifyOTP,

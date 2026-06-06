@@ -16,7 +16,6 @@ router.get("/users", getusers);
 router.put("/updateuser", updateuser);
 router.delete("/removeuser", removeuser);
 
-// Protected Route
 router.post("/getuserbyphone", getuserbyphone);
 
 module.exports = router;
