@@ -2,27 +2,14 @@
 const GoldLoan = require("../model/goldloanmodel");
 const GoldLoanLender = require("../model/goldlendermodel");
 
+
 const isGoldLoanEligibleForLender = (goldLoan, lender) => {
-    const loanOk = lender.loan_amount
-        ? Number(goldLoan.gold_loan_amount) <= Number(lender.loan_amount)
-        : true;
-
-    const weightOk = lender.gold_weight
-        ? Number(goldLoan.gold_weight) >= Number(lender.gold_weight)
-        : true;
-
-    const purityOk = lender.gold_purity
-        ? Number(goldLoan.gold_purity) >= Number(lender.gold_purity)
-        : true;
-
-    const valueOk = lender.gold_value
-        ? Number(goldLoan.gold_value) >= Number(lender.gold_value)
-        : true;
-
-    const formOk = !lender.gold_form ||
-        String(lender.gold_form).toLowerCase() ===
-        String(goldLoan.gold_form || "").toLowerCase();
-
+    const loanOk = goldLoan.gold_loan_amount <= lender.loan_amount;
+    const weightOk = goldLoan.gold_weight >= lender.gold_weight;
+    const purityOk = goldLoan.gold_purity >= lender.gold_purity;
+    const valueOk = goldLoan.gold_value >= lender.gold_value;
+    const formOk = goldLoan.gold_form === lender.gold_form;
+    
     return loanOk && weightOk && purityOk && valueOk && formOk;
 };
 

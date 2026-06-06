@@ -4,26 +4,23 @@ const mongoose = require("mongoose");
 
 
 const isPersonEligibleForLender = (person, lender) => {
-    const ageOk = lender.min_customer_age 
-        ? Number(person.person_age) >= Number(lender.min_customer_age) 
-        : true;
-
+    // Age eligibility
+    const ageOk = person.person_age >= lender.min_customer_age && 
+                  person.person_age <= lender.max_customer_age;
+    
+    // Monthly income eligibility (annual income / 12)
     const monthlyIncome = person.annual_income / 12;
-    const incomeOk = lender.min_monthly_income 
-        ? Number(monthlyIncome) >= Number(lender.min_monthly_income) 
-        : true;
-
-    const loanOk = lender.max_loan_amount 
-        ? Number(person.personal_loan_amount) <= Number(lender.max_loan_amount) &&
-          Number(person.personal_loan_amount) >= Number(lender.min_loan_amount)
-        : true;
-
-
-    const purposeOk = !lender.allowed_loan_purposes || lender.allowed_loan_purposes.length === 0 ||
-        lender.allowed_loan_purposes.some(purpose => 
-            String(purpose).toLowerCase() === String(person.loan_purpose || "").toLowerCase()
-        );
-
+    const incomeOk = monthlyIncome >= lender.min_monthly_income;
+    
+    // Loan amount eligibility
+    const loanOk = person.personal_loan_amount >= lender.min_loan_amount && 
+                   person.personal_loan_amount <= lender.max_loan_amount;
+    
+    // Loan purpose eligibility
+    const purposeOk = lender.allowed_loan_purposes.some(purpose => 
+        purpose.toLowerCase() === person.loan_purpose.toLowerCase()
+    );
+    
     return ageOk && incomeOk && loanOk && purposeOk;
 };
 

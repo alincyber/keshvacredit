@@ -44,3 +44,6 @@ uploads/
 # Misc
 *.tgz
 *.bak
+
+# API Documentation
+API_DOCUMENTATION.md

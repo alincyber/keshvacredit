@@ -1,27 +1,13 @@
 const GoldLoan = require("../model/goldloanmodel");
 const GoldLoanLender = require("../model/goldlendermodel");
 
-const isMissing = (value) => value === undefined || value === null || value === "";
-const toNumber = (value) => Number(value);
-
 const isGoldLoanEligibleForLender = (goldLoan, lender) => {
-    const requestedAmount = toNumber(goldLoan.gold_loan_amount || goldLoan.loan_amount);
-
-    const loanOk = lender.loan_amount
-        ? requestedAmount <= toNumber(lender.loan_amount)
-        : true;
-    const weightOk = lender.gold_weight
-        ? toNumber(goldLoan.gold_weight) >= toNumber(lender.gold_weight)
-        : true;
-    const purityOk = lender.gold_purity
-        ? toNumber(goldLoan.gold_purity) >= toNumber(lender.gold_purity)
-        : true;
-    const valueOk = lender.gold_value
-        ? toNumber(goldLoan.gold_value) >= toNumber(lender.gold_value)
-        : true;
-    const formOk = !lender.gold_form ||
-        String(lender.gold_form).toLowerCase() === String(goldLoan.gold_form || goldLoan.gold_type || "").toLowerCase();
-
+    const loanOk = goldLoan.gold_loan_amount <= lender.loan_amount;
+    const weightOk = goldLoan.gold_weight >= lender.gold_weight;
+    const purityOk = goldLoan.gold_purity >= lender.gold_purity;
+    const valueOk = goldLoan.gold_value >= lender.gold_value;
+    const formOk = goldLoan.gold_form === lender.gold_form;
+    
     return loanOk && weightOk && purityOk && valueOk && formOk;
 };
 const createGoldLoan = async (req, res) => {

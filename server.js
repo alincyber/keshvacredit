@@ -25,6 +25,7 @@ const homeLoanRoutes = require("./routes/homeloanroute");
 const homeLoanLenderRoutes = require("./routes/homeloanlenderroutes");
 const partnershipRoutes = require("./routes/partnerroutes");
 const deleteUserRoutes = require("./routes/deleteuserroutes");
+const wokrroute = require("./routes/workroute");
 const connectDB = require("./config/db");
 app.use(requestLogger);
 app.use(express.static("public"));
@@ -47,7 +48,8 @@ app.use("/api/personal-lender", personalLoanRoutes);
 app.use("/api/home-loan", homeLoanRoutes);
 app.use("/api/home-loan-lender", homeLoanLenderRoutes);
 app.use("/api/partnership", partnershipRoutes);
-app.use("/api", deleteUserRoutes);
+app.use("/api/deleteuser", deleteUserRoutes);
+app.use("/api/workreport",wokrroute);
 app.get("/", (req, res) => {
     res.send(`
         <html>

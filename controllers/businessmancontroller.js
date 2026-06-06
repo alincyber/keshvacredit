@@ -1,22 +1,16 @@
 const businessman = require("../model/businessmodel");
 const BusinessLender = require("../model/businesslender");
-
 const isBusinessEligibleForLender = (business, lender) => {
-    const ageOk = lender.business_age
-        ? Number(business.business_age) >= Number(lender.business_age)
-        : true;
 
-    const revenueOk = lender.annual_revenue
-        ? Number(business.annual_revenue) >= Number(lender.annual_revenue)
-        : true;
-
-    const loanOk = lender.business_loan_amount
-        ? Number(business.business_loan_amount) <= Number(lender.business_loan_amount)
-        : true;
-
-    const typeOk = !lender.business_type ||
-        String(lender.business_type).toLowerCase() === String(business.business_type || "").toLowerCase();
-
+    
+    const ageOk = business.business_age >= (lender.business_age || 0);
+    
+    const revenueOk = business.annual_revenue >= (lender.annual_revenue || 0);
+    
+    const loanOk = business.business_loan_amount <= (lender.business_loan_amount || Infinity);
+    
+    const typeOk = !lender.business_type || business.business_type === lender.business_type;
+    
     return ageOk && revenueOk && loanOk && typeOk;
 };
 
