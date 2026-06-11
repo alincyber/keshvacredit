@@ -253,7 +253,7 @@ if (existingUser) {
       email,
       pan,
       dob,
-      age, // saving computed age directly
+      age, 
       income: Number(income),
       loan_amount: Number(loan_amount),
       employment_type: jobType,
