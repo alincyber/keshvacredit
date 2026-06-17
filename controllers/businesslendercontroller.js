@@ -40,7 +40,6 @@ const addBusinessLender = async (req, res) => {
         if (business_age === undefined) return res.status(400).json({ message: "MINIMUM BUSINESS AGE IS REQUIRED" });
         if (annual_revenue === undefined) return res.status(400).json({ message: "MINIMUM ANNUAL REVENUE IS REQUIRED" });
         if (business_loan_amount === undefined) return res.status(400).json({ message: "MAXIMUM LOAN AMOUNT IS REQUIRED" });
-
         if (isNaN(business_age)) return res.status(400).json({ message: "BUSINESS AGE MUST BE A NUMBER" });
         if (isNaN(annual_revenue)) return res.status(400).json({ message: "ANNUAL REVENUE MUST BE A NUMBER" });
         if (isNaN(business_loan_amount)) return res.status(400).json({ message: "BUSINESS LOAN AMOUNT MUST BE A NUMBER" });
