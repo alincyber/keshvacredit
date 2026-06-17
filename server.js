@@ -33,7 +33,7 @@ app.use(cors());
 app.use(express.json());
 
 connectDB();
-
+app.use("/api",loginroutes)
 app.use("/api",contactroutes);
 app.use(express.json());
 app.use("/api", otpRoutes);
