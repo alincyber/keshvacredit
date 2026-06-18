@@ -12,7 +12,7 @@ const {
 router.post("/create-user", createPersonalUser);
 router.post("/compare-user", compareUserByPhone);
 router.get("/get-user", getPersonByPhone);
-router.post("/update-user", updateUserByPan);
-router.post("/delete-user", deletePersonByPan);
+router.put("/update-user", updateUserByPan);
+router.delete("/delete-user", deletePersonByPan);
 router.get("/get-all", getPerson);
 module.exports = router;
