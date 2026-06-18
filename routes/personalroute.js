@@ -11,8 +11,8 @@ const {
 
 router.post("/create-user", createPersonalUser);
 router.post("/compare-user", compareUserByPhone);
-router.post("/get-user", getPersonByPhone);
+router.get("/get-user", getPersonByPhone);
 router.post("/update-user", updateUserByPan);
 router.post("/delete-user", deletePersonByPan);
-router.post("/get-all", getPerson);
+router.get("/get-all", getPerson);
 module.exports = router;
