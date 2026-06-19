@@ -100,7 +100,8 @@ const createbusinessman = async (req, res) => {
             business_loan_purpose,
             annual_revenue,
             business_location,
-            business_loan_amount,           Udyam_Registration_Number,
+            business_loan_amount,           
+            Udyam_Registration_Number,
             gst_number,
             msme_registration_number
         });
@@ -149,6 +150,50 @@ const getbusinessman = async (req, res) => {
     }
 };
 
+const getBusinessByPhone = async (req, res) => {
+    try {
+        const { business_owner_phone } = req.body;
+
+        if (!business_owner_phone) {
+            return res.status(400).json({
+                success: false,
+                message: "PHONE NUMBER IS REQUIRED"
+            });
+        }
+
+        if (String(business_owner_phone).length !== 10 || isNaN(business_owner_phone)) {
+            return res.status(400).json({
+                success: false,
+                message: "PHONE NUMBER MUST BE 10 DIGITS"
+            });
+        }
+
+        const businessData = await businessman.findOne({ 
+            business_owner_phone: String(business_owner_phone) 
+        });
+
+        if (!businessData) {
+            return res.status(404).json({
+                success: false,
+                message: "BUSINESS NOT FOUND WITH THIS PHONE NUMBER"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "BUSINESS DATA FETCHED SUCCESSFULLY",
+            data: businessData
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "INTERNAL SERVER ERROR",
+            error: error.message
+        });
+    }
+};
+
 const updatebusinessman = async (req, res) => {
     try {
         const { business_pan } = req.body;
@@ -190,5 +235,6 @@ const updatebusinessman = async (req, res) => {
 module.exports = {
     createbusinessman,
     getbusinessman,
-    updatebusinessman
+    updatebusinessman,
+    getBusinessByPhone
 };
