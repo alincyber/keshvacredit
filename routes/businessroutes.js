@@ -7,7 +7,8 @@ const {
     getbusinessman,
     updatebusinessman,
     getBusinessByPhone
-} = require("../controllers/businessmancontroller");
+} 
+= require("../controllers/businessmancontroller");
 
 router.post("/createbusinessman", createbusinessman);
 router.get("/businessmen", getbusinessman);
