@@ -13,6 +13,6 @@ const {
 router.post("/createbusinessman", createbusinessman);
 router.get("/businessmen", getbusinessman);
 router.put("/updatebusinessman", updatebusinessman);
-router.get("/get-by-phone", getBusinessByPhone); 
+router.post("/get-by-phone", getBusinessByPhone); 
 
 module.exports = router;
