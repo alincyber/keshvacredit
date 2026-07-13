@@ -13,7 +13,21 @@ const userschema= new Schema({
     employment_type:{type:String},
     pincode:{type:String},
     city:{type:String},
-    state:{type:String}
+    state:{type:String},
+    deleteRequested: {
+    type: Boolean,
+    default: false
+},
+
+deleteAt: {
+    type: Date,
+    default: null
+},
+
+deleteReason: {
+    type: String,
+    default: null
+}
 },{versionKey:false});
 
 module.exports=model("User",userschema);

@@ -13,47 +13,64 @@ const deleteUser = async (req, res) => {
             });
         }
 
-        const deletedUser = await User.findOne({ 
-            phone: phone,
-            email: email 
+        const user = await User.findOne({
+            phone,
+            email
         });
 
-        if (!deletedUser) {
+        if (!user) {
             return res.status(404).json({
                 success: false,
-                message: "User not found with this phone and email combination"
+                message: "User not found"
             });
         }
 
+        if (user.deleteRequested) {
+            return res.status(400).json({
+                success: false,
+                message: "Account deletion request already exists."
+            });
+        }
+
+        // Save backup only once
         await DeletedUser.create({
-            name: deletedUser.name,
-            phone: deletedUser.phone,
-            email: deletedUser.email,
-            pan: deletedUser.pan,
-            dob: deletedUser.dob,
-            age: deletedUser.age,
-            income: deletedUser.income,
-            loan_amount: deletedUser.loan_amount,
-            employment_type: deletedUser.employment_type,
-            pincode: deletedUser.pincode,
-            city: deletedUser.city,
-            state: deletedUser.state,
-            reason: reason || "User requested deletion"
+            name: user.name,
+            phone: user.phone,
+            email: user.email,
+            pan: user.pan,
+            dob: user.dob,
+            age: user.age,
+            income: user.income,
+            loan_amount: user.loan_amount,
+            employment_type: user.employment_type,
+            pincode: user.pincode,
+            city: user.city,
+            state: user.state,
+            reason: reason || "User requested deletion",
+            deleteRequestedAt: new Date()
         });
 
-        await User.findByIdAndDelete(deletedUser._id);
+        // Schedule deletion after 48 hours
+        user.deleteRequested = true;
+        user.deleteReason = reason || "User requested deletion";
+        user.deleteAt = new Date(Date.now() + 48 * 60 * 60 * 1000);
 
-        logger.info(`User deleted successfully: ${email}, ${phone}`);
+        await user.save();
+
+        logger.info(`Deletion scheduled for ${email}`);
+
         res.status(200).json({
             success: true,
-            message: "User deleted successfully and data shifted to deleteuser collection",
-            data: deletedUser
+            message: "Your account will be permanently deleted after 48 hours.",
+            deleteAt: user.deleteAt
         });
+
     } catch (error) {
-        logger.error(`Error deleting user: ${error.message}`);
+        logger.error(error.message);
+
         res.status(500).json({
             success: false,
-            message: "Internal server error",
+            message: "Internal Server Error",
             error: error.message
         });
     }

@@ -2,7 +2,6 @@ const businessman = require("../model/businessmodel");
 const BusinessLender = require("../model/businesslender");
 const isBusinessEligibleForLender = (business, lender) => {
 
-    
     const ageOk = business.business_age >= (lender.business_age || 0);
     
     const revenueOk = business.annual_revenue >= (lender.annual_revenue || 0);
@@ -68,7 +67,6 @@ const createbusinessman = async (req, res) => {
                 message: "BUSINESS WITH THIS PAN NUMBER ALREADY EXISTS"
             });
         }
-
         if (String(business_owner_phone).length !== 10) {
             return res.status(400).json({
                 message: "PHONE NUMBER MUST BE 10 DIGITS"
@@ -80,6 +78,7 @@ const createbusinessman = async (req, res) => {
                 message: "PHONE NUMBER MUST CONTAIN NUMBERS ONLY"
             });
         }
+
 
         if (!business_owner_email.includes("@gmail.com")) {
             return res.status(400).json({

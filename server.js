@@ -7,7 +7,7 @@ const dns = require("dns");
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 const app = express();
 const PORT = process.env.PORT || 5000;
-
+require("./cron/deleteUsers");
 const otpRoutes = require("./routes/otpRoutes");
 const loginroutes = require("./routes/loginroutes");
 const loanroutes = require("./routes/loanroutes");
@@ -48,7 +48,7 @@ app.use("/api/personal-lender", personalLoanRoutes);
 app.use("/api/home-loan", homeLoanRoutes);
 app.use("/api/home-loan-lender", homeLoanLenderRoutes);
 app.use("/api/partnership", partnershipRoutes);
-app.use("/api/deleteuser", deleteUserRoutes);
+app.use("/api/", deleteUserRoutes);
 app.use("/api/workreport",wokrroute);
 app.get("/", (req, res) => {
     res.send(`
@@ -63,7 +63,7 @@ app.get("/", (req, res) => {
                     padding-top:100px;
                     font-family:Arial;
                 }
-                h1{
+          deleteuser      h1{
                     color:lime;
                 }
                 button{
@@ -94,6 +94,13 @@ app.get("/read", (req, res) => {
     `);
 });
 
+app.get("/", (req, res) => {
+    res.send(`
+        <html>
+        ...
+        </html>
+    `);
+});
 
 app.listen(PORT, () => {
   logger.info(`Server running on http://localhost:${PORT}`);
