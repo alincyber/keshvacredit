@@ -1,4 +1,4 @@
-const User = require("../model/userdata");
+const User = require("../model/partnermodel");
 const DeletedUser = require("../model/deleteusermodel");
 const logger = require("../config/logger");
 
