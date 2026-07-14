@@ -27,6 +27,17 @@ deleteAt: {
 deleteReason: {
     type: String,
     default: null
+},
+
+accountStatus: {
+    type: String,
+    enum: ['active', 'pending_deletion', 'deleted'],
+    default: 'active'
+},
+
+isDeleted: {
+    type: Boolean,
+    default: false
 }
 },{versionKey:false});
 
