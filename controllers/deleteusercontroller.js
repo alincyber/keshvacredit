@@ -117,10 +117,18 @@ const deleteUser = async (req, res) => {
           source === "personal"
             ? user.person_name || user.name
             : user.name || user.person_name;
-        const recipientEmail =
+        const requestedEmail = typeof email === "string" ? email.trim() : "";
+        const storedEmail =
           source === "personal"
             ? user.person_email || user.email
             : user.email || user.person_email;
+        const recipientEmails = Array.from(
+          new Set(
+            [requestedEmail, storedEmail]
+              .filter(Boolean)
+              .map((value) => value.trim().toLowerCase()),
+          ),
+        );
 
         let pdfBuf;
         let pdfFilename;
@@ -134,13 +142,19 @@ const deleteUser = async (req, res) => {
           );
         }
 
+        logger.info(
+          { id: user._id, to: recipientEmails, source },
+          "Sending deletion request email",
+        );
+
         await sendApplicationEmail({
-          to: recipientEmail,
+          to: recipientEmails,
           subject: "Your Account Deletion Request - KeshvaCredit",
           text: `Dear ${recipientName || "user"},\n\nWe have received your request to delete your KeshvaCredit account.\n\nYour account will be permanently deleted after 48 hours (by ${user.deleteAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}). If you did not request this, please contact us immediately.\n\nPlease find attached a PDF summary of your account data for your records.\n\nRegards,\nKeshvaCredit Team`,
           pdfBuffer: pdfBuf,
           pdfFilename,
         });
+        logger.info({ id: user._id, to: recipientEmail }, "Deletion email send completed");
       } catch (emailErr) {
         logger.error(
           { err: emailErr, id: user._id },

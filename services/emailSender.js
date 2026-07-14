@@ -17,16 +17,19 @@ async function sendApplicationEmail({
   pdfBuffer,
   pdfFilename,
 }) {
-  try {
-    const recipient = typeof to === "string" ? to.trim() : "";
+  const recipients = Array.isArray(to)
+    ? to.filter(Boolean).map((value) => value.trim())
+    : [typeof to === "string" ? to.trim() : ""];
 
-    if (!recipient) {
+  try {
+    const normalizedRecipients = recipients.filter(Boolean);
+    if (!normalizedRecipients.length) {
       throw new Error("No recipient email provided");
     }
 
     const mailOptions = {
       from: `"KeshvaCredit" <${process.env.EMAIL_USER?.trim() || "noreply@keshvacredit.com"}>`,
-      to: recipient,
+      to: normalizedRecipients,
       subject,
       text,
     };
@@ -40,15 +43,27 @@ async function sendApplicationEmail({
       ];
     }
 
+    logger.info({ to: normalizedRecipients, subject }, "Attempting to send application email");
     const info = await transporter.sendMail(mailOptions);
 
     logger.info(
-      { messageId: info.messageId, to: "[REDACTED]" },
+      { messageId: info.messageId, response: info.response, to: normalizedRecipients },
       "Application email sent",
     );
     return info;
   } catch (err) {
-    logger.error({ err, to: "[REDACTED]" }, "Failed to send application email");
+    logger.error(
+      {
+        err: {
+          message: err.message,
+          code: err.code,
+          response: err.response,
+          stack: err.stack,
+        },
+        to: normalizedRecipients,
+      },
+      "Failed to send application email",
+    );
     throw err;
   }
 }
