@@ -1,5 +1,6 @@
 const GoldLoan = require("../model/goldloanmodel");
 const GoldLoanLender = require("../model/goldlendermodel");
+const logger = require("../config/logger");
 
 const isGoldLoanEligibleForLender = (goldLoan, lender) => {
     const loanOk = goldLoan.gold_loan_amount <= lender.loan_amount;

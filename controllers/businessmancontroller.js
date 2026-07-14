@@ -1,5 +1,7 @@
 const businessman = require("../model/businessmodel");
 const BusinessLender = require("../model/businesslender");
+const logger = require("../config/logger");
+
 const isBusinessEligibleForLender = (business, lender) => {
 
     const ageOk = business.business_age >= (lender.business_age || 0);
@@ -106,6 +108,7 @@ const createbusinessman = async (req, res) => {
         });
 
         const savedBusiness = await business.save();
+
         const businessData = {
             ...savedBusiness.toObject(),
             business_age: Number(savedBusiness.business_age),

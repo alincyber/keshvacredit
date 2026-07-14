@@ -21,7 +21,6 @@ const isPersonEligibleForLender = (person, lender) => {
     return ageOk && incomeOk && loanOk && purposeOk;
 };
 
-
 const createPersonalUser = async (req, res) => {
     try {
         const {
@@ -125,7 +124,6 @@ const createPersonalUser = async (req, res) => {
 
         const savedPerson = await personObj.save();
         
-
         const lenders = await PersonalLender.find();
         
         const personData = {

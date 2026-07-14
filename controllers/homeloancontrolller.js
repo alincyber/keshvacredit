@@ -1,6 +1,6 @@
 const HomeLoan = require("../model/homeloanmodel");
 const HomeLoanLender = require("../model/homeloanlendermodel");
-
+const logger = require("../config/logger");
 
 const isApplicantEligibleForLender = (applicant, lender) => {
 
@@ -140,7 +140,6 @@ const createHomeLoan = async (req, res) => {
         });
 
         const savedApplication = await homeLoanObj.save();
-        
 
         const lenders = await HomeLoanLender.find();
         

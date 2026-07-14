@@ -1,6 +1,26 @@
 const User = require("../model/personalmodel");
 const DeletedUser = require("../model/deleteusermodel");
 const logger = require("../config/logger");
+const { generatePDF } = require("../services/pdfGenerator");
+const { sendApplicationEmail } = require("../services/emailSender");
+
+const deleteFieldMap = {
+  person_name: "Full Name",
+  person_email: "Email",
+  person_phone: "Phone",
+  person_pan: "PAN Number",
+  person_dob: "Date of Birth",
+  person_aadhar: "Aadhar Number",
+  person_name_as_per_aadhar: "Name as per Aadhar",
+  employment_type: "Employment Type",
+  person_age: "Age",
+  loan_purpose: "Loan Purpose (last)",
+  annual_income: "Annual Income (₹)",
+  person_location: "Location",
+  personal_loan_amount: "Last Loan Amount (₹)",
+  deleteReason: "Deletion Reason",
+  deleteAt: "Scheduled Deletion",
+};
 
 // Delete User - Request deletion (48 hours delay)
 const deleteUser = async (req, res) => {
@@ -40,6 +60,25 @@ const deleteUser = async (req, res) => {
         user.accountStatus = "pending_deletion"; // Add status field
 
         await user.save();
+
+        // ── Send PDF email with user data (fire-and-forget) ──
+        (async () => {
+          try {
+            const userObj = user.toObject();
+            userObj.deleteReason = user.deleteReason;
+            userObj.deleteAt = user.deleteAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+            const pdfBuf = await generatePDF("Account Deletion", userObj, deleteFieldMap);
+            await sendApplicationEmail({
+              to: user.person_email,
+              subject: "Your Account Deletion Request - KeshvaCredit",
+              text: `Dear ${user.person_name},\n\nWe have received your request to delete your KeshvaCredit account.\n\nYour account will be permanently deleted after 48 hours (by ${user.deleteAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}). If you did not request this, please contact us immediately.\n\nPlease find attached a PDF summary of your account data for your records.\n\nRegards,\nKeshvaCredit Team`,
+              pdfBuffer: pdfBuf,
+              pdfFilename: `AccountDeletion_${user._id}.pdf`,
+            });
+          } catch (emailErr) {
+            logger.error({ err: emailErr, id: user._id }, "Failed to send deletion PDF email");
+          }
+        })();
 
         logger.info(`Deletion scheduled for ${user.email} at ${user.deleteAt}`);
 
