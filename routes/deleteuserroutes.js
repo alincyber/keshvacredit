@@ -1,8 +1,11 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { deleteUser } = require("../controllers/deleteusercontroller");
+const { deleteUser, cancelDeletionRequest } = require('../controllers/deleteusercontroller');
 
-// Delete user by phone and email
-router.post("/delete-user", deleteUser);
+// Route to request account deletion (48 hours delay)
+router.post('/delete-account', deleteUser);
+
+// Route to cancel deletion request
+router.post('/cancel-deletion', cancelDeletionRequest);
 
 module.exports = router;

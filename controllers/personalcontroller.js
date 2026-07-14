@@ -1,5 +1,6 @@
 const person = require("../model/personalmodel");
 const PersonalLender = require("../model/personallendermodel");
+const logger = require("../config/logger");
 
 const isPersonEligibleForLender = (person, lender) => {
 
@@ -393,11 +394,78 @@ const getPerson = async (req, res) => {
     }
 };
 
+
+const getPersonalLoans = async (req, res) => {
+    try {
+        // Add filter to exclude users with pending deletion and deleted
+        const filter = {
+            accountStatus: { $nin: ['pending_deletion', 'deleted'] },
+            // Add other filter conditions as needed
+        };
+
+        // You can add query parameters for filtering
+        if (req.query.status) {
+            filter.accountStatus = req.query.status;
+        }
+
+        const users = await person.find(filter);
+
+        return res.status(200).json({
+            success: true,
+            count: users.length,
+            data: users
+        });
+
+    } catch (error) {
+        logger.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message,
+        });
+    }
+};
+
+// Get a single user by ID (excluding pending deletion)
+const getUserById = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        const user = await person.findOne({ 
+            _id: userId,
+            accountStatus: { $nin: ['pending_deletion', 'deleted'] }
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found or account is being deleted."
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: user
+        });
+
+    } catch (error) {
+        logger.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message,
+        });
+    }
+};
+
+
 module.exports = {
     createPersonalUser,
     compareUserByPhone,
     getPersonByPhone,
     updateUserByPan,
     deletePersonByPan,
-    getPerson
+    getPerson,
+    getPersonalLoans,
+     getUserById 
 };
