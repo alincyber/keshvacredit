@@ -10,22 +10,42 @@ const logger = require("../config/logger");
  * @param {Buffer} params.pdfBuffer - PDF document buffer
  * @param {string} params.pdfFilename - Name for the PDF file
  */
-async function sendApplicationEmail({ to, subject, text, pdfBuffer, pdfFilename }) {
+async function sendApplicationEmail({
+  to,
+  subject,
+  text,
+  pdfBuffer,
+  pdfFilename,
+}) {
   try {
-    const info = await transporter.sendMail({
-      from: `"KeshvaCredit" <${process.env.EMAIL_USER}>`,
-      to,
+    const recipient = typeof to === "string" ? to.trim() : "";
+
+    if (!recipient) {
+      throw new Error("No recipient email provided");
+    }
+
+    const mailOptions = {
+      from: `"KeshvaCredit" <${process.env.EMAIL_USER?.trim() || "noreply@keshvacredit.com"}>`,
+      to: recipient,
       subject,
       text,
-      attachments: [
+    };
+
+    if (pdfBuffer && pdfFilename) {
+      mailOptions.attachments = [
         {
           filename: pdfFilename,
           content: pdfBuffer,
         },
-      ],
-    });
+      ];
+    }
 
-    logger.info({ messageId: info.messageId, to: "[REDACTED]" }, "Application email sent");
+    const info = await transporter.sendMail(mailOptions);
+
+    logger.info(
+      { messageId: info.messageId, to: "[REDACTED]" },
+      "Application email sent",
+    );
     return info;
   } catch (err) {
     logger.error({ err, to: "[REDACTED]" }, "Failed to send application email");

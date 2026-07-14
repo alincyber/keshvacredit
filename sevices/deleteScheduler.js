@@ -105,9 +105,11 @@ async function archiveUser(user, source) {
 
       // Use the original user data snapshot saved in the deleted record if available,
       // otherwise fall back to the live user object.
-      const original = (deletedUser.originalUserData && typeof deletedUser.originalUserData === 'object')
-        ? deletedUser.originalUserData
-        : user.toObject();
+      const original =
+        deletedUser.originalUserData &&
+        typeof deletedUser.originalUserData === "object"
+          ? deletedUser.originalUserData
+          : user.toObject();
 
       // Add deletion metadata for clarity
       original.deleteReason = recordData.deleteReason || original.deleteReason;
@@ -115,26 +117,44 @@ async function archiveUser(user, source) {
 
       const fieldMap = source === "personal" ? personalFieldMap : formFieldMap;
 
-      const loanType = source === "personal" ? "Personal Loan - Account Deleted" : "Form User - Account Deleted";
+      const loanType =
+        source === "personal"
+          ? "Personal Loan - Account Deleted"
+          : "Form User - Account Deleted";
       const pdfBuf = await generatePDF(loanType, original, fieldMap);
 
-      const recipientName = source === "personal" ? original.person_name || original.name : original.name || original.person_name;
-      const recipientEmail = source === "personal" ? original.person_email : original.email;
+      const recipientName =
+        source === "personal"
+          ? original.person_name || original.name
+          : original.name || original.person_name;
+      const recipientEmail =
+        source === "personal"
+          ? original.person_email || original.email
+          : original.email || original.person_email;
 
       if (recipientEmail) {
         await sendApplicationEmail({
           to: recipientEmail,
           subject: "Your KeshvaCredit Account Has Been Deleted",
-          text: `Dear ${recipientName || 'user'},\n\nYour KeshvaCredit account has been permanently deleted and archived from our system. Please find an attached PDF summary of your archived account data for your records.\n\nRegards,\nKeshvaCredit Team`,
+          text: `Dear ${recipientName || "user"},\n\nYour KeshvaCredit account has been permanently deleted and archived from our system. Please find an attached PDF summary of your archived account data for your records.\n\nRegards,\nKeshvaCredit Team`,
           pdfBuffer: pdfBuf,
           pdfFilename: `AccountDeleted_${deletedUser._id}.pdf`,
         });
-        logger.info({ to: recipientEmail, userId: user._id }, "Sent account deletion email with PDF");
+        logger.info(
+          { to: recipientEmail, userId: user._id },
+          "Sent account deletion email with PDF",
+        );
       } else {
-        logger.warn({ userId: user._id }, "No recipient email available to send deletion PDF");
+        logger.warn(
+          { userId: user._id },
+          "No recipient email available to send deletion PDF",
+        );
       }
     } catch (err) {
-      logger.error({ err, userId: user._id }, "Failed to generate/send deletion PDF email");
+      logger.error(
+        { err, userId: user._id },
+        "Failed to generate/send deletion PDF email",
+      );
     }
   })();
 }
